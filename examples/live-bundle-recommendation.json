@@ -1,0 +1,37 @@
+{
+  "kind": "用户显式套餐模式真实验证，非普通单品随机",
+  "store": {
+    "id": "1420450",
+    "name": "麦当劳深圳福田高铁站餐厅",
+    "address": "福田地铁站时尚美食广场D区"
+  },
+  "items": [
+    {
+      "name": "【美汁源】“多汁柠柠”",
+      "kind": "drink",
+      "kcal": null
+    },
+    {
+      "name": "麦辣鸡腿汉堡",
+      "kind": "main",
+      "kcal": 485.0
+    },
+    {
+      "name": "中薯条",
+      "kind": "side",
+      "kcal": 289.0
+    }
+  ],
+  "quoted_at": "2026-10-24 17:19:23",
+  "payable_fen": 3450,
+  "baseline_fen": 4900,
+  "best_labels": [
+    "精选单人餐三件套"
+  ],
+  "scope": "固定餐单；检查 32/32 个套餐/随心配入口、单点及当前门店已有券；不含主动领券或开卡",
+  "truncated": false,
+  "eligible_bundle_recipes": 8,
+  "successful_quotes": 3,
+  "failed_quotes": 0,
+  "pending_quotes": 0
+}

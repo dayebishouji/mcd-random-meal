@@ -112,6 +112,7 @@ def main():
     p.add_argument('--count', type=int, choices=range(1, 7), default=3)
     p.add_argument('--output', required=True)
     p = commands.add_parser('live', help='按指定城市地标查询、随机选餐并进行官方核价')
+    p.add_argument('--bundle', action='store_true', help='显式套餐模式：从当前核验通过的单人套餐参考搭配中随机选餐')
     p.add_argument('--city', required=True)
     p.add_argument('--keyword', required=True)
     p.add_argument('--store-code', help='不填时选接口返回的首家营业门店')
@@ -194,7 +195,7 @@ def main():
             result = client.tools()
         elif args.command == 'live':
             from live import live_recommend
-            result = live_recommend(client, args.city, args.keyword, args.store_code, args.no_main, args.count)
+            result = live_recommend(client, args.city, args.keyword, args.store_code, args.no_main, args.count, bundle_mode=args.bundle)
         elif args.command == 'call':
             result = client.call(args.tool, read(args.arguments))
         else:

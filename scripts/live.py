@@ -110,7 +110,7 @@ def prepare_snapshot(menu, nutrition, store, details):
             'context': {'orderType': 1, 'beType': 1}, 'items': items, 'skipped': skipped}
 
 
-def live_recommend(client, city, keyword, store_code=None, no_main=False, count=3):
+def live_recommend(client, city, keyword, store_code=None, no_main=False, count=3, bundle_mode=False):
     if type(count) is not int or not 1 <= count <= 6:
         raise ValueError('每次推荐 1 至 6 样，默认 3 样')
     def call(name, arguments):
@@ -137,8 +137,14 @@ def live_recommend(client, city, keyword, store_code=None, no_main=False, count=
             except ToolBusinessError:
                 detail_failures.append(name)
     snapshot = prepare_snapshot(menu, nutrition, store, details)
-    meal = draw(snapshot, no_main=no_main, count=count)
+    bundle_info = {}
+    if bundle_mode:
+        from bundle_recommend import bundle_meal
+        meal,bundle_info = bundle_meal(client,snapshot,menu,details,count,no_main)
+    else:
+        meal = draw(snapshot, no_main=no_main, count=count)
     result = price_saved(client,meal,menu=menu,details=details,revalidate=False)
     result['verification'].update(eligible_items=len(snapshot['items']),detail_failures=detail_failures,
                                   excluded=snapshot['skipped'],store_selection='指定门店' if store_code else '接口返回的首家营业门店')
+    result['verification'].update(bundle_info)
     return result

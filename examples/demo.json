@@ -1,7 +1,7 @@
 {
   "mode": "demo",
   "observed_at": "2026-10-24（虚构示例，无实时性）",
-  "source": "人工构造测试数据；价格、热量、优惠及门店均为虚构",
+  "source": "离线演示；原13样为虚构测试数据，新增餐品名称、图片和营养来自MCP参考快照；金额/优惠均用于模拟，非当前实付",
   "store": {
     "id": "DEMO",
     "name": "演示餐厅（虚构）",
@@ -161,6 +161,412 @@
       "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G515837_320.png",
       "image_caption": "麦当劳官方示意 · 圆筒冰淇淋",
       "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
+    },
+    {
+      "id": "mcd-511781",
+      "name": "演示培根安格斯厚牛堡",
+      "kind": "main",
+      "menu_fen": 3450,
+      "kcal": 707.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "511781",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_511781_320.png",
+      "image_caption": "麦当劳官方示意 · 培根安格斯厚牛堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-6352",
+      "name": "演示阳光橙麦炫酷",
+      "kind": "drink",
+      "menu_fen": 1350,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "6352",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_6352_320.png",
+      "image_caption": "麦当劳官方示意 · 阳光橙麦炫酷",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-511782",
+      "name": "演示芝士安格斯厚牛堡",
+      "kind": "main",
+      "menu_fen": 3150,
+      "kcal": 696.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "511782",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_511782_320.png",
+      "image_caption": "麦当劳官方示意 · 芝士安格斯厚牛堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-521741",
+      "name": "演示脆薯饼",
+      "kind": "side",
+      "menu_fen": 800,
+      "kcal": 146.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "521741",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_521741_320.png",
+      "image_caption": "麦当劳官方示意 · 脆薯饼",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-2430",
+      "name": "演示【美汁源】“黄金橙橙”",
+      "kind": "drink",
+      "menu_fen": 1300,
+      "kcal": 165.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "2430",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20240904/product/MS_2430_320.png",
+      "image_caption": "麦当劳官方示意 · 【美汁源】“黄金橙橙”",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-3755",
+      "name": "演示纯牛奶(盒装)",
+      "kind": "drink",
+      "menu_fen": 1100,
+      "kcal": 129.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "3755",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20240731/product/MS_3755_320.png",
+      "image_caption": "麦当劳官方示意 · 纯牛奶(盒装)",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-6362",
+      "name": "演示100% 苹果汁(盒装)",
+      "kind": "drink",
+      "menu_fen": 1150,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "6362",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20250430/product/MS_6362_320_1745552987716.png",
+      "image_caption": "麦当劳官方示意 · 100% 苹果汁(盒装)",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-3010",
+      "name": "演示雪碧（小杯）",
+      "kind": "drink",
+      "menu_fen": 950,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "3010",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G3010_320.png",
+      "image_caption": "麦当劳官方示意 · 雪碧（小杯）",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-1106",
+      "name": "演示培根蔬萃双层牛堡",
+      "kind": "main",
+      "menu_fen": 2500,
+      "kcal": 442.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "1106",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1106_320.png",
+      "image_caption": "麦当劳官方示意 · 培根蔬萃双层牛堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-507394",
+      "name": "演示热牛奶中杯",
+      "kind": "drink",
+      "menu_fen": 1900,
+      "kcal": 176.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "507394",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G5073941_320.png",
+      "image_caption": "麦当劳官方示意 · 热牛奶中杯",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-9900008746",
+      "name": "演示双层脆鸡堡",
+      "kind": "main",
+      "menu_fen": 2350,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "9900008746",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260624/product/MS_9900008746_320.gif",
+      "image_caption": "麦当劳官方示意 · 双层脆鸡堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-9900008745",
+      "name": "演示朱古力新地",
+      "kind": "dessert",
+      "menu_fen": 1300,
+      "kcal": 282.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "9900008745",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008745_320.gif",
+      "image_caption": "麦当劳官方示意 · 朱古力新地",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-9900008747",
+      "name": "演示汉堡包",
+      "kind": "main",
+      "menu_fen": 1400,
+      "kcal": 248.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "9900008747",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_9900008747_320.gif",
+      "image_caption": "麦当劳官方示意 · 汉堡包",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-515520",
+      "name": "演示中杯怡泉+C",
+      "kind": "drink",
+      "menu_fen": 1150,
+      "kcal": 110.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "515520",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G515520_320.png",
+      "image_caption": "麦当劳官方示意 · 中杯怡泉+C",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-1120",
+      "name": "演示双层吉士汉堡",
+      "kind": "main",
+      "menu_fen": 2300,
+      "kcal": 429.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "1120",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1120_320.png",
+      "image_caption": "麦当劳官方示意 · 双层吉士汉堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-9900008754",
+      "name": "演示奥利奥麦旋风",
+      "kind": "dessert",
+      "menu_fen": 1550,
+      "kcal": 266.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "9900008754",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008754_320.gif",
+      "image_caption": "麦当劳官方示意 · 奥利奥麦旋风",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-1406",
+      "name": "演示板烧鸡腿堡",
+      "kind": "main",
+      "menu_fen": 2350,
+      "kcal": 391.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "1406",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20241008/product/MS_1406_320.png",
+      "image_caption": "麦当劳官方示意 · 板烧鸡腿堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-521156",
+      "name": "演示那么大鸡排（椒盐风味）",
+      "kind": "side",
+      "menu_fen": 1400,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "521156",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260101/product/MS_521156_320.png",
+      "image_caption": "麦当劳官方示意 · 那么大鸡排（椒盐风味）",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-510488",
+      "name": "演示热燕麦奶中杯",
+      "kind": "drink",
+      "menu_fen": 2100,
+      "kcal": 157.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "510488",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G510489_320.png",
+      "image_caption": "麦当劳官方示意 · 热燕麦奶中杯",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-4648",
+      "name": "演示不素之霸双层牛堡",
+      "kind": "main",
+      "menu_fen": 2650,
+      "kcal": 493.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "4648",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_4648_320.png",
+      "image_caption": "麦当劳官方示意 · 不素之霸双层牛堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-9900003586",
+      "name": "演示原味双层深海鳕鱼堡",
+      "kind": "main",
+      "menu_fen": 2400,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "9900003586",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900003586_320.png",
+      "image_caption": "麦当劳官方示意 · 原味双层深海鳕鱼堡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-515280",
+      "name": "演示阳光柠檬红茶小杯",
+      "kind": "drink",
+      "menu_fen": 950,
+      "kcal": 85.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "515280",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G515280_320.png",
+      "image_caption": "麦当劳官方示意 · 阳光柠檬红茶小杯",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-507387",
+      "name": "演示卡布奇诺中杯",
+      "kind": "drink",
+      "menu_fen": 2100,
+      "kcal": 167.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "507387",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20250324/product/MS_G507388_320.png",
+      "image_caption": "麦当劳官方示意 · 卡布奇诺中杯",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-521817",
+      "name": "演示【美汁源】“多汁柠柠”",
+      "kind": "drink",
+      "menu_fen": 1200,
+      "kcal": null,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "521817",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260807/product/MS_521817_320.png",
+      "image_caption": "麦当劳官方示意 · 【美汁源】“多汁柠柠”",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-1450",
+      "name": "演示麦香鸡",
+      "kind": "main",
+      "menu_fen": 1650,
+      "kcal": 369.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "1450",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_1450_320.png",
+      "image_caption": "麦当劳官方示意 · 麦香鸡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-520689",
+      "name": "演示小杯鲜萃咖啡",
+      "kind": "drink",
+      "menu_fen": 950,
+      "kcal": 15.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "520689",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20250324/product/MS_G520688_320.gif",
+      "image_caption": "麦当劳官方示意 · 小杯鲜萃咖啡",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-507409",
+      "name": "演示麦咖啡™冰奶铁中杯",
+      "kind": "drink",
+      "menu_fen": 1390,
+      "kcal": 148.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "507409",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260422/product/MS_G507372_320.gif",
+      "image_caption": "麦当劳官方示意 · 麦咖啡™冰奶铁中杯",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-507411",
+      "name": "演示麦咖啡™冰美式中杯",
+      "kind": "drink",
+      "menu_fen": 1190,
+      "kcal": 13.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "507411",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260422/product/MS_G507374_320.gif",
+      "image_caption": "麦当劳官方示意 · 麦咖啡™冰美式中杯",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
+    },
+    {
+      "id": "mcd-9900005432",
+      "name": "演示麦麦脆汁鸡-琵琶腿",
+      "kind": "side",
+      "menu_fen": 1500,
+      "kcal": 328.0,
+      "selectable": true,
+      "evidence": "名称/默认规格/营养来自官方MCP参考快照；这里按固定演示规则模拟报价，不代表当前可售或实付",
+      "catalog_id": "9900005432",
+      "catalog_observed_at": "2026-10-24 17:00:55",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900005432_320.png",
+      "image_caption": "麦当劳官方示意 · 麦麦脆汁鸡-琵琶腿",
+      "image_source": "query-meals 官方图片；参考快照 2026-10-24 17:00:55"
     }
   ],
   "offers": [
@@ -497,6 +903,1438 @@
       "demo_fen": 2900,
       "evidence": "虚构演示套餐，组成与份数固定",
       "conditions": "只含所列三样，不可换规格"
+    },
+    {
+      "id": "single:mcd-511781",
+      "label": "演示培根安格斯厚牛堡单点",
+      "covers": {
+        "mcd-511781": 1
+      },
+      "demo_fen": 3450,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-511781",
+      "label": "演示培根安格斯厚牛堡演示优惠券",
+      "covers": {
+        "mcd-511781": 1
+      },
+      "demo_fen": 3250,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-6352",
+      "label": "演示阳光橙麦炫酷单点",
+      "covers": {
+        "mcd-6352": 1
+      },
+      "demo_fen": 1350,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-6352",
+      "label": "演示阳光橙麦炫酷演示优惠券",
+      "covers": {
+        "mcd-6352": 1
+      },
+      "demo_fen": 1150,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-511782",
+      "label": "演示芝士安格斯厚牛堡单点",
+      "covers": {
+        "mcd-511782": 1
+      },
+      "demo_fen": 3150,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-511782",
+      "label": "演示芝士安格斯厚牛堡演示优惠券",
+      "covers": {
+        "mcd-511782": 1
+      },
+      "demo_fen": 2950,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-521741",
+      "label": "演示脆薯饼单点",
+      "covers": {
+        "mcd-521741": 1
+      },
+      "demo_fen": 800,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-521741",
+      "label": "演示脆薯饼演示优惠券",
+      "covers": {
+        "mcd-521741": 1
+      },
+      "demo_fen": 600,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-2430",
+      "label": "演示【美汁源】“黄金橙橙”单点",
+      "covers": {
+        "mcd-2430": 1
+      },
+      "demo_fen": 1300,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-2430",
+      "label": "演示【美汁源】“黄金橙橙”演示优惠券",
+      "covers": {
+        "mcd-2430": 1
+      },
+      "demo_fen": 1100,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-3755",
+      "label": "演示纯牛奶(盒装)单点",
+      "covers": {
+        "mcd-3755": 1
+      },
+      "demo_fen": 1100,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-3755",
+      "label": "演示纯牛奶(盒装)演示优惠券",
+      "covers": {
+        "mcd-3755": 1
+      },
+      "demo_fen": 900,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-6362",
+      "label": "演示100% 苹果汁(盒装)单点",
+      "covers": {
+        "mcd-6362": 1
+      },
+      "demo_fen": 1150,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-6362",
+      "label": "演示100% 苹果汁(盒装)演示优惠券",
+      "covers": {
+        "mcd-6362": 1
+      },
+      "demo_fen": 950,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-3010",
+      "label": "演示雪碧（小杯）单点",
+      "covers": {
+        "mcd-3010": 1
+      },
+      "demo_fen": 950,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-3010",
+      "label": "演示雪碧（小杯）演示优惠券",
+      "covers": {
+        "mcd-3010": 1
+      },
+      "demo_fen": 750,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-1106",
+      "label": "演示培根蔬萃双层牛堡单点",
+      "covers": {
+        "mcd-1106": 1
+      },
+      "demo_fen": 2500,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-1106",
+      "label": "演示培根蔬萃双层牛堡演示优惠券",
+      "covers": {
+        "mcd-1106": 1
+      },
+      "demo_fen": 2300,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-507394",
+      "label": "演示热牛奶中杯单点",
+      "covers": {
+        "mcd-507394": 1
+      },
+      "demo_fen": 1900,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-507394",
+      "label": "演示热牛奶中杯演示优惠券",
+      "covers": {
+        "mcd-507394": 1
+      },
+      "demo_fen": 1700,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-9900008746",
+      "label": "演示双层脆鸡堡单点",
+      "covers": {
+        "mcd-9900008746": 1
+      },
+      "demo_fen": 2350,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-9900008746",
+      "label": "演示双层脆鸡堡演示优惠券",
+      "covers": {
+        "mcd-9900008746": 1
+      },
+      "demo_fen": 2150,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-9900008745",
+      "label": "演示朱古力新地单点",
+      "covers": {
+        "mcd-9900008745": 1
+      },
+      "demo_fen": 1300,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-9900008745",
+      "label": "演示朱古力新地演示优惠券",
+      "covers": {
+        "mcd-9900008745": 1
+      },
+      "demo_fen": 1100,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-9900008747",
+      "label": "演示汉堡包单点",
+      "covers": {
+        "mcd-9900008747": 1
+      },
+      "demo_fen": 1400,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-9900008747",
+      "label": "演示汉堡包演示优惠券",
+      "covers": {
+        "mcd-9900008747": 1
+      },
+      "demo_fen": 1200,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-515520",
+      "label": "演示中杯怡泉+C单点",
+      "covers": {
+        "mcd-515520": 1
+      },
+      "demo_fen": 1150,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-515520",
+      "label": "演示中杯怡泉+C演示优惠券",
+      "covers": {
+        "mcd-515520": 1
+      },
+      "demo_fen": 950,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-1120",
+      "label": "演示双层吉士汉堡单点",
+      "covers": {
+        "mcd-1120": 1
+      },
+      "demo_fen": 2300,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-1120",
+      "label": "演示双层吉士汉堡演示优惠券",
+      "covers": {
+        "mcd-1120": 1
+      },
+      "demo_fen": 2100,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-9900008754",
+      "label": "演示奥利奥麦旋风单点",
+      "covers": {
+        "mcd-9900008754": 1
+      },
+      "demo_fen": 1550,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-9900008754",
+      "label": "演示奥利奥麦旋风演示优惠券",
+      "covers": {
+        "mcd-9900008754": 1
+      },
+      "demo_fen": 1350,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-1406",
+      "label": "演示板烧鸡腿堡单点",
+      "covers": {
+        "mcd-1406": 1
+      },
+      "demo_fen": 2350,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-1406",
+      "label": "演示板烧鸡腿堡演示优惠券",
+      "covers": {
+        "mcd-1406": 1
+      },
+      "demo_fen": 2150,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-521156",
+      "label": "演示那么大鸡排（椒盐风味）单点",
+      "covers": {
+        "mcd-521156": 1
+      },
+      "demo_fen": 1400,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-521156",
+      "label": "演示那么大鸡排（椒盐风味）演示优惠券",
+      "covers": {
+        "mcd-521156": 1
+      },
+      "demo_fen": 1200,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-510488",
+      "label": "演示热燕麦奶中杯单点",
+      "covers": {
+        "mcd-510488": 1
+      },
+      "demo_fen": 2100,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-510488",
+      "label": "演示热燕麦奶中杯演示优惠券",
+      "covers": {
+        "mcd-510488": 1
+      },
+      "demo_fen": 1900,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-4648",
+      "label": "演示不素之霸双层牛堡单点",
+      "covers": {
+        "mcd-4648": 1
+      },
+      "demo_fen": 2650,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-4648",
+      "label": "演示不素之霸双层牛堡演示优惠券",
+      "covers": {
+        "mcd-4648": 1
+      },
+      "demo_fen": 2450,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-9900003586",
+      "label": "演示原味双层深海鳕鱼堡单点",
+      "covers": {
+        "mcd-9900003586": 1
+      },
+      "demo_fen": 2400,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-9900003586",
+      "label": "演示原味双层深海鳕鱼堡演示优惠券",
+      "covers": {
+        "mcd-9900003586": 1
+      },
+      "demo_fen": 2200,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-515280",
+      "label": "演示阳光柠檬红茶小杯单点",
+      "covers": {
+        "mcd-515280": 1
+      },
+      "demo_fen": 950,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-515280",
+      "label": "演示阳光柠檬红茶小杯演示优惠券",
+      "covers": {
+        "mcd-515280": 1
+      },
+      "demo_fen": 750,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-507387",
+      "label": "演示卡布奇诺中杯单点",
+      "covers": {
+        "mcd-507387": 1
+      },
+      "demo_fen": 2100,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-507387",
+      "label": "演示卡布奇诺中杯演示优惠券",
+      "covers": {
+        "mcd-507387": 1
+      },
+      "demo_fen": 1900,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-521817",
+      "label": "演示【美汁源】“多汁柠柠”单点",
+      "covers": {
+        "mcd-521817": 1
+      },
+      "demo_fen": 1200,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-521817",
+      "label": "演示【美汁源】“多汁柠柠”演示优惠券",
+      "covers": {
+        "mcd-521817": 1
+      },
+      "demo_fen": 1000,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-1450",
+      "label": "演示麦香鸡单点",
+      "covers": {
+        "mcd-1450": 1
+      },
+      "demo_fen": 1650,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-1450",
+      "label": "演示麦香鸡演示优惠券",
+      "covers": {
+        "mcd-1450": 1
+      },
+      "demo_fen": 1450,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-520689",
+      "label": "演示小杯鲜萃咖啡单点",
+      "covers": {
+        "mcd-520689": 1
+      },
+      "demo_fen": 950,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-520689",
+      "label": "演示小杯鲜萃咖啡演示优惠券",
+      "covers": {
+        "mcd-520689": 1
+      },
+      "demo_fen": 750,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-507409",
+      "label": "演示麦咖啡™冰奶铁中杯单点",
+      "covers": {
+        "mcd-507409": 1
+      },
+      "demo_fen": 1390,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-507409",
+      "label": "演示麦咖啡™冰奶铁中杯演示优惠券",
+      "covers": {
+        "mcd-507409": 1
+      },
+      "demo_fen": 1190,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-507411",
+      "label": "演示麦咖啡™冰美式中杯单点",
+      "covers": {
+        "mcd-507411": 1
+      },
+      "demo_fen": 1190,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-507411",
+      "label": "演示麦咖啡™冰美式中杯演示优惠券",
+      "covers": {
+        "mcd-507411": 1
+      },
+      "demo_fen": 990,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "single:mcd-9900005432",
+      "label": "演示麦麦脆汁鸡-琵琶腿单点",
+      "covers": {
+        "mcd-9900005432": 1
+      },
+      "demo_fen": 1500,
+      "evidence": "固定参考金额用于模拟，不是当前官方报价"
+    },
+    {
+      "id": "coupon:mcd-9900005432",
+      "label": "演示麦麦脆汁鸡-琵琶腿演示优惠券",
+      "covers": {
+        "mcd-9900005432": 1
+      },
+      "demo_fen": 1300,
+      "exclusive_groups": [
+        "demo-coupon"
+      ],
+      "conditions": "纯模拟：一单限用一张减2元演示券",
+      "evidence": "虚构演示券规则"
+    },
+    {
+      "id": "bundle:mcp-9900013304",
+      "label": "MCP参考·人气经典随心配",
+      "covers": {
+        "mcd-1120": 1,
+        "pie": 1
+      },
+      "demo_fen": 1490,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900013304",
+        "name": "人气经典随心配",
+        "item_ids": [
+          "1120",
+          "9900008752"
+        ],
+        "items": [
+          {
+            "id": "1120",
+            "name": "双层吉士汉堡",
+            "kind": "main"
+          },
+          {
+            "id": "9900008752",
+            "name": "菠萝派",
+            "kind": "dessert"
+          }
+        ],
+        "bundle_price_fen": 1490,
+        "baseline_price_fen": 3150,
+        "quoted_at": "2026-10-24 17:10:21"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900015568",
+      "label": "MCP参考·精选超值随心配",
+      "covers": {
+        "mcd-521156": 1,
+        "pie": 1
+      },
+      "demo_fen": 1390,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900015568",
+        "name": "精选超值随心配",
+        "item_ids": [
+          "521156",
+          "9900008752"
+        ],
+        "items": [
+          {
+            "id": "521156",
+            "name": "那么大鸡排（椒盐风味）",
+            "kind": "side"
+          },
+          {
+            "id": "9900008752",
+            "name": "菠萝派",
+            "kind": "dessert"
+          }
+        ],
+        "bundle_price_fen": 1390,
+        "baseline_price_fen": 2250,
+        "quoted_at": "2026-10-24 17:10:22"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900004064",
+      "label": "MCP参考·精选单人餐三件套",
+      "covers": {
+        "mcd-1406": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 3550,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900004064",
+        "name": "精选单人餐三件套",
+        "item_ids": [
+          "1406",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1406",
+            "name": "板烧鸡腿堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3550,
+        "baseline_price_fen": 5000,
+        "quoted_at": "2026-10-24 17:10:22"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900004835",
+      "label": "MCP参考·麦乐鸡经典中套餐",
+      "covers": {
+        "nuggets": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 2600,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900004835",
+        "name": "麦乐鸡经典中套餐",
+        "item_ids": [
+          "1401",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1401",
+            "name": "麦乐鸡5块",
+            "kind": "side"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 2600,
+        "baseline_price_fen": 4050,
+        "quoted_at": "2026-10-24 17:10:23"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005411",
+      "label": "MCP参考·不素之霸双层牛堡三件套",
+      "covers": {
+        "mcd-4648": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 3850,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005411",
+        "name": "不素之霸双层牛堡三件套",
+        "item_ids": [
+          "4648",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "4648",
+            "name": "不素之霸双层牛堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3850,
+        "baseline_price_fen": 5300,
+        "quoted_at": "2026-10-24 17:10:23"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005413",
+      "label": "MCP参考·双层深海鳕鱼堡三件套",
+      "covers": {
+        "mcd-9900003586": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 3600,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005413",
+        "name": "双层深海鳕鱼堡三件套",
+        "item_ids": [
+          "9900003586",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "9900003586",
+            "name": "原味双层深海鳕鱼堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3600,
+        "baseline_price_fen": 5050,
+        "quoted_at": "2026-10-24 17:10:24"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005428",
+      "label": "MCP参考·培根安格斯厚牛堡三件套",
+      "covers": {
+        "mcd-511781": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 4650,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005428",
+        "name": "培根安格斯厚牛堡三件套",
+        "item_ids": [
+          "511781",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "511781",
+            "name": "培根安格斯厚牛堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 4650,
+        "baseline_price_fen": 6100,
+        "quoted_at": "2026-10-24 17:10:24"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005430",
+      "label": "MCP参考·芝士安格斯厚牛堡三件套",
+      "covers": {
+        "mcd-511782": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 4350,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005430",
+        "name": "芝士安格斯厚牛堡三件套",
+        "item_ids": [
+          "511782",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "511782",
+            "name": "芝士安格斯厚牛堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 4350,
+        "baseline_price_fen": 5800,
+        "quoted_at": "2026-10-24 17:10:25"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005453",
+      "label": "MCP参考·麦香鸡中套餐",
+      "covers": {
+        "mcd-1450": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 2850,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005453",
+        "name": "麦香鸡中套餐",
+        "item_ids": [
+          "1450",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1450",
+            "name": "麦香鸡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 2850,
+        "baseline_price_fen": 4300,
+        "quoted_at": "2026-10-24 17:10:26"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005456",
+      "label": "MCP参考·麦辣鸡腿汉堡三件套",
+      "covers": {
+        "chicken-burger": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 3450,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005456",
+        "name": "麦辣鸡腿汉堡三件套",
+        "item_ids": [
+          "1440",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1440",
+            "name": "麦辣鸡腿汉堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3450,
+        "baseline_price_fen": 4900,
+        "quoted_at": "2026-10-24 17:10:26"
+      }
+    },
+    {
+      "id": "bundle:mcp-9900005460",
+      "label": "MCP参考·麦香鱼中套餐",
+      "covers": {
+        "fish-burger": 1,
+        "fries": 1,
+        "mcd-521817": 1
+      },
+      "demo_fen": 3400,
+      "conditions": "离线模拟；组合参考MCP历史回执，实际规格和当前优惠须由Skill重新核价",
+      "evidence": "本次MCP核实的具体搭配参考；演示旧餐品为同类示意，不冒充真实整单回执",
+      "reference_quote": {
+        "bundle_code": "9900005460",
+        "name": "麦香鱼中套餐",
+        "item_ids": [
+          "1600",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1600",
+            "name": "麦香鱼",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3400,
+        "baseline_price_fen": 4850,
+        "quoted_at": "2026-10-24 17:10:27"
+      }
     }
-  ]
+  ],
+  "catalog_summary": {
+    "observed_at": "2026-10-24 17:00:55",
+    "reference_items": 46,
+    "common_reference_items": 39,
+    "added_items": 29,
+    "demo_items": 42,
+    "notice": "接口无永久/常驻标记。常见参考为人工整理的候选，不承诺全年、全国或此刻可售；真实推荐必须重新查目标门店菜单和规格。",
+    "bundle_entries": 32,
+    "verified_bundle_quotes": 12,
+    "demo_bundle_recipes": 11
+  },
+  "bundle_reference": {
+    "store": {
+      "id": "1420450",
+      "name": "麦当劳深圳福田高铁站餐厅",
+      "address": "福田地铁站时尚美食广场D区"
+    },
+    "quotes": [
+      {
+        "bundle_code": "9900013304",
+        "name": "人气经典随心配",
+        "item_ids": [
+          "1120",
+          "9900008752"
+        ],
+        "items": [
+          {
+            "id": "1120",
+            "name": "双层吉士汉堡",
+            "kind": "main"
+          },
+          {
+            "id": "9900008752",
+            "name": "菠萝派",
+            "kind": "dessert"
+          }
+        ],
+        "bundle_price_fen": 1490,
+        "baseline_price_fen": 3150,
+        "quoted_at": "2026-10-24 17:10:21"
+      },
+      {
+        "bundle_code": "9900015568",
+        "name": "精选超值随心配",
+        "item_ids": [
+          "521156",
+          "9900008752"
+        ],
+        "items": [
+          {
+            "id": "521156",
+            "name": "那么大鸡排（椒盐风味）",
+            "kind": "side"
+          },
+          {
+            "id": "9900008752",
+            "name": "菠萝派",
+            "kind": "dessert"
+          }
+        ],
+        "bundle_price_fen": 1390,
+        "baseline_price_fen": 2250,
+        "quoted_at": "2026-10-24 17:10:22"
+      },
+      {
+        "bundle_code": "9900004064",
+        "name": "精选单人餐三件套",
+        "item_ids": [
+          "1406",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1406",
+            "name": "板烧鸡腿堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3550,
+        "baseline_price_fen": 5000,
+        "quoted_at": "2026-10-24 17:10:22"
+      },
+      {
+        "bundle_code": "9900004835",
+        "name": "麦乐鸡经典中套餐",
+        "item_ids": [
+          "1401",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1401",
+            "name": "麦乐鸡5块",
+            "kind": "side"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 2600,
+        "baseline_price_fen": 4050,
+        "quoted_at": "2026-10-24 17:10:23"
+      },
+      {
+        "bundle_code": "9900005411",
+        "name": "不素之霸双层牛堡三件套",
+        "item_ids": [
+          "4648",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "4648",
+            "name": "不素之霸双层牛堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3850,
+        "baseline_price_fen": 5300,
+        "quoted_at": "2026-10-24 17:10:23"
+      },
+      {
+        "bundle_code": "9900005413",
+        "name": "双层深海鳕鱼堡三件套",
+        "item_ids": [
+          "9900003586",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "9900003586",
+            "name": "原味双层深海鳕鱼堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3600,
+        "baseline_price_fen": 5050,
+        "quoted_at": "2026-10-24 17:10:24"
+      },
+      {
+        "bundle_code": "9900005428",
+        "name": "培根安格斯厚牛堡三件套",
+        "item_ids": [
+          "511781",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "511781",
+            "name": "培根安格斯厚牛堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 4650,
+        "baseline_price_fen": 6100,
+        "quoted_at": "2026-10-24 17:10:24"
+      },
+      {
+        "bundle_code": "9900005430",
+        "name": "芝士安格斯厚牛堡三件套",
+        "item_ids": [
+          "511782",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "511782",
+            "name": "芝士安格斯厚牛堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 4350,
+        "baseline_price_fen": 5800,
+        "quoted_at": "2026-10-24 17:10:25"
+      },
+      {
+        "bundle_code": "9900005453",
+        "name": "麦香鸡中套餐",
+        "item_ids": [
+          "1450",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1450",
+            "name": "麦香鸡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 2850,
+        "baseline_price_fen": 4300,
+        "quoted_at": "2026-10-24 17:10:26"
+      },
+      {
+        "bundle_code": "9900005456",
+        "name": "麦辣鸡腿汉堡三件套",
+        "item_ids": [
+          "1440",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1440",
+            "name": "麦辣鸡腿汉堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3450,
+        "baseline_price_fen": 4900,
+        "quoted_at": "2026-10-24 17:10:26"
+      },
+      {
+        "bundle_code": "9900005460",
+        "name": "麦香鱼中套餐",
+        "item_ids": [
+          "1600",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1600",
+            "name": "麦香鱼",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3400,
+        "baseline_price_fen": 4850,
+        "quoted_at": "2026-10-24 17:10:27"
+      },
+      {
+        "bundle_code": "9900005462",
+        "name": "板烧鸡腿堡三件套",
+        "item_ids": [
+          "1406",
+          "4810",
+          "521817"
+        ],
+        "items": [
+          {
+            "id": "1406",
+            "name": "板烧鸡腿堡",
+            "kind": "main"
+          },
+          {
+            "id": "4810",
+            "name": "中薯条",
+            "kind": "side"
+          },
+          {
+            "id": "521817",
+            "name": "【美汁源】“多汁柠柠”",
+            "kind": "drink"
+          }
+        ],
+        "bundle_price_fen": 3550,
+        "baseline_price_fen": 5000,
+        "quoted_at": "2026-10-24 17:10:27"
+      }
+    ],
+    "notice": "套餐名称、轮次、可选规格及补差来自官方MCP；price是菜单参考价，verified_quotes为指定搭配的历史整单回执。真实推荐须刷新当前门店详情并重新核价，不能把历史价当当前实付。"
+  }
 }
