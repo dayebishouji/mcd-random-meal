@@ -42,7 +42,9 @@
       <div class="wrap">
         <div class="section-heading"><div><p class="eyebrow">你的随机开饭台</p><h2 id="demo-title">今天，就吃这一组？</h2></div><span class="demo-badge">模拟体验 / 非实时菜单与价格</span></div>
         <div class="controls"><div class="mode-group" role="group" aria-label="主食偏好"><button id="with-main" class="mode active" aria-pressed="true">默认带主食</button><button id="without-main" class="mode" aria-pressed="false">不要主食</button></div><label class="quantity-control" for="quantity-select">这次抽几样<select id="quantity-select"><option value="1">1 样</option><option value="2">2 样</option><option value="3" selected>3 样</option><option value="4">4 样</option><option value="5">5 样</option><option value="6">6 样</option></select></label><button class="button button-red" id="draw-button"><span class="dice-icon" aria-hidden="true">⚄</span> 再抽一组 <span aria-hidden="true">↗</span></button></div>
-        <div class="bundle-entry"><button class="utility-button" id="bundle-button">随机来份套餐 ↗</button><p id="catalog-note"></p></div>
+        <div class="bundle-entry"><button class="utility-button" id="bundle-button" aria-controls="bundle-picker" aria-expanded="false" aria-describedby="bundle-size-hint">随机3样套餐 ↗</button><div><p id="catalog-note"></p><p id="bundle-size-hint"></p></div></div>
+        <p id="bundle-feedback" class="bundle-feedback" role="status" aria-live="polite"></p>
+        <div id="bundle-picker" class="bundle-picker" role="group" aria-label="选择套餐样数" hidden><button class="utility-button" data-bundle-size="2">抽2样套餐</button><button class="utility-button" data-bundle-size="3">抽3样套餐</button></div>
         <details class="catalog-panel"><summary>看看有哪些餐品和套餐参考</summary><p>常见参考不代表全年或所有门店供应。普通随机保持原来的等概率规则；套餐只在你选择套餐模式时限制餐单范围。</p><div id="catalog-list"></div><h3>官方套餐历史核价 · 具体搭配</h3><p>下列为深圳参考门店的历史整单回执，不是网页模拟餐单的实付承诺。更换饮品、薯条规格可能补差，真实使用须重新核价。</p><div id="bundle-reference-list"></div></details>
         <p id="action-status" class="action-status" role="status" aria-live="polite">准备好了，看看今天的手气。</p>
         <div class="workspace" aria-busy="false">

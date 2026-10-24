@@ -72,15 +72,19 @@
     const baseline = plans.find(p => p.offers.every(o => o.id.startsWith('single:')));
     return { plans, best: plans[0] || null, baseline: baseline ? baseline.amount : null, truncated };
   }
-  function drawBundle(data,noMain=false,choose=randomInt,quantity=3) {
+  function bundleCandidates(data,noMain,quantity=null) {
     const baskets=new Map();
     for(const offer of data.offers) {
       const ids=Object.keys(offer.covers);
-      if(!offer.id.startsWith('bundle:') || ids.length!==quantity || !Object.values(offer.covers).every(n=>n===1) || !validMeal(data,{ids,noMain})) continue;
+      if(!offer.id.startsWith('bundle:') || (quantity!==null && ids.length!==quantity) || !Object.values(offer.covers).every(n=>n===1) || !validMeal(data,{ids,noMain})) continue;
       baskets.set(ids.slice().sort().join(','),ids.map(id=>data.items.find(i=>i.id===id)));
     }
-    if(!baskets.size) throw new Error('当前演示没有符合数量和主食偏好的套餐，请选择2–3样，或使用普通随机。');
-    const result=Array.from(baskets.values())[choose(baskets.size)].slice();
+    return Array.from(baskets.values());
+  }
+  function drawBundle(data,noMain=false,choose=randomInt,quantity=3) {
+    const baskets=bundleCandidates(data,noMain,quantity);
+    if(!baskets.length) throw new Error('当前演示没有符合数量和主食偏好的套餐，请选择2–3样，或使用普通随机。');
+    const result=baskets[choose(baskets.length)].slice();
     for(let i=result.length-1;i>0;i--){const j=choose(i+1);[result[i],result[j]]=[result[j],result[i]];}
     return result;
   }
@@ -109,7 +113,7 @@
   const $ = id => document.getElementById(id);
   const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const money = fen => `¥${(fen / 100).toFixed(2)}`;
-  $('catalog-note').textContent = `可抽 ${data.items.filter(i=>i.selectable).length} 样 · ${data.offers.filter(o=>o.id.startsWith('bundle:')).length} 个套餐参考买法。套餐模式也按所选数量和主食偏好抽取。`;
+  $('catalog-note').textContent = `可抽 ${data.items.filter(i=>i.selectable).length} 样 · ${data.offers.filter(o=>o.id.startsWith('bundle:')).length} 个套餐参考买法。普通随机支持1–6样。`;
   $('catalog-list').textContent = ['main','side','drink','dessert'].map(kind=>({main:'主食',side:'小食',drink:'饮品',dessert:'甜品'}[kind]+ '：'+data.items.filter(i=>i.selectable&&i.kind===kind).map(i=>i.name.replace(/^演示/,'')).join('、'))).join('\n\n');
   $('bundle-reference-list').innerHTML = (data.bundle_reference?.quotes || []).map(q=>`<div class="quote-row"><span>${escape(q.name)}<small>${escape(q.items.map(i=>i.name).join(' ＋ '))}<br>${escape(q.quoted_at)} · ${escape(data.bundle_reference.store.name)}</small></span><b>${money(q.bundle_price_fen)}</b></div>`).join('');
   const names = { main: '主食', side: '小食', drink: '饮品', dessert: '甜品' };
@@ -141,6 +145,18 @@
     $('without-main').setAttribute('aria-pressed', String(value));
     $('with-main').classList.toggle('active', !value);
     $('without-main').classList.toggle('active', value);
+    closeBundlePicker();
+  }
+  function closeBundlePicker() {
+    $('bundle-picker').hidden=true;
+    $('bundle-button').setAttribute('aria-expanded','false');
+  }
+  function updateBundleEntry() {
+    const sizes=[...new Set(bundleCandidates(data,noMain).map(items=>items.length))].sort();
+    $('bundle-button').textContent = sizes.includes(quantity) ? `随机${quantity}样套餐 ↗` : sizes.length ? '选择套餐样数 ↗' : '查看套餐状态';
+    $('bundle-size-hint').textContent = sizes.length ? `当前${noMain?'不要主食':'带主食'}套餐支持 ${sizes.join('、')} 样；选其他数量时，点击后可选择套餐样数。` : '当前主食偏好下没有可用套餐，可使用普通随机。';
+    document.querySelectorAll('[data-bundle-size]').forEach(button=>{button.disabled=busy||!sizes.includes(Number(button.dataset.bundleSize));});
+    return sizes;
   }
   function renderHistory() {
     $('history-list').innerHTML = recent.length ? recent.map((entry, index) => `<button class="history-entry" data-history="${index}"${busy ? ' disabled' : ''}><span>${entry.ids.map(id => escape(data.items.find(i => i.id === id).name.replace(/^演示/, ''))).join(' ＋ ')}</span><small>${entry.ids.length} 样 · ${entry.example ? '固定模拟案例' : entry.noMain ? '不含主食' : '带主食'} · 恢复 ↗</small></button>`).join('') : '<p class="history-empty">还没有记录。再抽一组，就会留在这里。</p>';
@@ -208,6 +224,8 @@
       recent = [entry, ...recent.filter(value => value.ids.slice().sort().join(',') !== key)].slice(0, 6);
     }
     renderHistory(); updateReference(); persist();
+    closeBundlePicker(); updateBundleEntry();
+    $('bundle-feedback').textContent = source==='bundle' ? `第${count}次套餐推荐已生成，共${quantity}样。相同套餐可能再次抽到，结果见下方。` : '';
     root.dispatchEvent(new CustomEvent('meal:shown', { detail: api.current() }));
   }
   function setBusy(value) {
@@ -219,6 +237,7 @@
     $('hero-draw').setAttribute('aria-disabled', String(value));
     $('draw-button').setAttribute('aria-label', value ? '正在抽取餐单' : '再抽一组');
     renderHistory();
+    updateBundleEntry();
   }
   function redraw(nextMode = noMain, nextQuantity = quantity, bundleOnly = false) {
     if (busy) return;
@@ -226,9 +245,10 @@
     quantity = nextQuantity;
     mode(nextMode); setBusy(true);
     $('action-status').textContent = `骰子转一圈，正在揭晓 ${quantity} 样餐品…`;
+    if(bundleOnly) $('bundle-feedback').textContent=`正在生成${quantity}样套餐…`;
     root.setTimeout(() => {
-      try { const items = bundleOnly ? drawBundle(data,noMain,randomInt,quantity) : draw(data, noMain, randomInt, quantity); count++; show(items,bundleOnly?'bundle':'random'); }
-      catch (_) { mode(previousMode); quantity = previousQuantity; $('quantity-select').value = String(quantity); $('action-status').textContent = bundleOnly ? '当前没有符合数量和主食偏好的套餐。可选2–3样重试，或使用普通随机；原餐单已保留。' : '这次没能抽取，当前可选餐品不足或随机源不可用。请调整数量或刷新后再试。'; }
+      try { const items = bundleOnly ? drawBundle(data,noMain,randomInt,quantity) : draw(data, noMain, randomInt, quantity); count++; show(items,bundleOnly?'bundle':'random'); if(bundleOnly) document.querySelector('.workspace').scrollIntoView({block:'start',behavior:root.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}); }
+      catch (_) { mode(previousMode); quantity = previousQuantity; $('quantity-select').value = String(quantity); $('action-status').textContent = bundleOnly ? '这次没能生成套餐，请重新选择套餐样数或稍后再试；原餐单已保留。' : '这次没能抽取，当前可选餐品不足或随机源不可用。请调整数量或刷新后再试。'; if(bundleOnly) $('bundle-feedback').textContent=$('action-status').textContent; }
       finally { setBusy(false); loadShared(); }
     }, root.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 360);
   }
@@ -253,7 +273,24 @@
     }
   }
   $('draw-button').addEventListener('click', () => { clearSharedHash(); redraw(); });
-  $('bundle-button').addEventListener('click', () => { clearSharedHash(); redraw(noMain,quantity,true); });
+  $('bundle-button').addEventListener('click', () => {
+    if(busy)return;
+    const sizes=updateBundleEntry();
+    if(!sizes.includes(quantity)) {
+      $('bundle-picker').hidden=false;
+      $('bundle-button').setAttribute('aria-expanded','true');
+      $('bundle-feedback').textContent=sizes.length ? `当前${quantity}样没有匹配的单人套餐，请在下方选择套餐样数；原餐单已保留。` : '当前没有可用套餐，请使用普通随机；原餐单已保留。';
+      $('action-status').textContent=$('bundle-feedback').textContent;
+      document.querySelector('#bundle-picker button:not(:disabled)')?.focus();
+      return;
+    }
+    clearSharedHash(); redraw(noMain,quantity,true);
+  });
+  $('bundle-picker').addEventListener('click', event=>{
+    const button=event.target.closest('[data-bundle-size]');
+    if(!button||button.disabled||busy)return;
+    clearSharedHash();closeBundlePicker();redraw(noMain,Number(button.dataset.bundleSize),true);
+  });
   $('reprice-button').addEventListener('click', () => {
     if (busy || !selected.length) return;
     show(selected.slice(), currentExample ? 'example' : 'restored', false);
