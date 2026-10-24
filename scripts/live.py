@@ -1,14 +1,14 @@
 """Adapter for the official MCP schema observed on 2026-10-24."""
 
 import csv
-import itertools
 import re
-from collections import Counter
 import math
 
-from meal import amount_to_fen, draw, fingerprint, optimize, select_best
+from meal import amount_to_fen, draw, fingerprint
 from mcp_readonly import ToolBusinessError, tool_data
 from images import official_image
+from request_binding import default_item
+from pricing import bundle_offers, price_saved
 
 
 def classify(name):
@@ -65,38 +65,6 @@ def nutrition_map(text):
             else:
                 result[name] = value
     return result
-
-
-def modification(entity):
-    values = []
-    for group in entity.get('modification', {}).get('items', []):
-        for option in group.get('values', []):
-            quantity = option.get('selectedQuantity', 0)
-            key = option.get('selectedKey') if quantity else option.get('unselectedKey')
-            if key is not None:
-                values.append({'code': option['code'], 'key': key, 'quantity': quantity})
-    return {'modification': {'values': values}} if values else {}
-
-
-def default_item(detail):
-    request = {'productCode': detail['code'], 'quantity': 1, **modification(detail)}
-    components = []
-    rounds = []
-    for group in detail.get('rounds', []):
-        selected = [c for c in group.get('choices', []) if c.get('isDefault') == 1 and c.get('quantity', 0) > 0]
-        total = sum(c['quantity'] for c in selected)
-        if not selected or total < group.get('minQuantity', 0):
-            raise ValueError('餐品缺少完整默认规格')
-        rounds.append({'round': str(group['id']), 'comboItemList': [
-            {'code': c['code'], 'quantity': c['quantity'], **modification(c)} for c in selected]})
-        components.extend({'code': c['code'], 'name': c['name'], 'quantity': c['quantity']} for c in selected)
-    if rounds:
-        request['roundList'] = rounds
-    else:
-        components = [{'code': detail['code'], 'name': detail['name'], 'quantity': 1}]
-    return request, components
-
-
 def prepare_snapshot(menu, nutrition, store, details):
     calories = nutrition_map(nutrition['data'])
     items = []
@@ -142,46 +110,6 @@ def prepare_snapshot(menu, nutrition, store, details):
             'context': {'orderType': 1, 'beType': 1}, 'items': items, 'skipped': skipped}
 
 
-def bundle_offers(detail, meal):
-    """Only construct bundles with identical physical product codes and quantities."""
-    target = Counter()
-    for item in meal['items']:
-        for component in item['components']:
-            target[component['code']] += component['quantity']
-    groups = detail.get('rounds', [])
-    if not groups or any(g.get('quantity') != 1 or g.get('minQuantity') != 1 or g.get('maxQuantity') != 1 for g in groups):
-        return []
-    choices = [[c for c in g.get('choices', []) if c['code'] in target] for g in groups]
-    if any(not group for group in choices):
-        return []
-    offers = []
-    for picked in itertools.islice(itertools.product(*choices), 64):
-        cover = Counter(c['code'] for c in picked)
-        if not cover <= target:
-            continue
-        match = None
-        for count in range(1, len(meal['items']) + 1):
-            for subset in itertools.combinations(meal['items'], count):
-                physical = Counter()
-                for item in subset:
-                    physical.update({c['code']: c['quantity'] for c in item['components']})
-                if physical == cover:
-                    match = {item['id']: 1 for item in subset}
-                    break
-            if match:
-                break
-        if not match:
-            continue
-        request = {'productCode': detail['code'], 'quantity': 1, 'roundList': [
-            {'round': str(group['id']), 'comboItemList': [{'code': choice['code'], 'quantity': 1, **modification(choice)}]}
-            for group, choice in zip(groups, picked)]}
-        offers.append({'id': detail['code'] + ':' + ':'.join(c['code'] for c in picked),
-                       'label': detail['name'], 'covers': match, 'request_item': request,
-                       'conditions': '相同餐品与份数，标准特调；官方整单核价确认',
-                       'evidence': 'query-meal-detail 返回的实际可选组成，商品编码逐项相等'})
-    return offers
-
-
 def live_recommend(client, city, keyword, store_code=None, no_main=False, count=3):
     if type(count) is not int or not 1 <= count <= 6:
         raise ValueError('每次推荐 1 至 6 样，默认 3 样')
@@ -195,14 +123,6 @@ def live_recommend(client, city, keyword, store_code=None, no_main=False, count=
     context = {'storeCode': store['storeCode'], 'orderType': 1, 'beType': 1}
     menu = call('query-meals', context)
     nutrition = call('list-nutrition-foods', {})
-    warnings = []
-    try:
-        coupons = call('query-store-coupons', context)
-        coupon_count = len(coupons['data'])
-    except ToolBusinessError:
-        coupons = {'data': []}
-        coupon_count = None
-        warnings.append('门店优惠券查询失败，本轮不比较券，不代表账号无券')
     details = {}
     detail_failures = []
     attempted = 0
@@ -218,67 +138,7 @@ def live_recommend(client, city, keyword, store_code=None, no_main=False, count=
                 detail_failures.append(name)
     snapshot = prepare_snapshot(menu, nutrition, store, details)
     meal = draw(snapshot, no_main=no_main, count=count)
-    offers = [{'id': 'single:' + item['id'], 'label': item['name'] + '单点', 'covers': {item['id']: 1},
-               'request_item': item['request_item'], 'evidence': item['evidence']} for item in meal['items']]
-    for item in meal['items']:
-        for alternate in item.get('alternates', []):
-            offers.append({'id': 'alternate:' + alternate['id'], 'label': alternate['name'] + '等价菜单入口',
-                           'covers': {item['id']: 1}, 'request_item': alternate['request_item'],
-                           'evidence': '默认餐品组成编码与数量完全一致的另一菜单入口'})
-    for coupon in coupons['data']:
-        if not coupon.get('couponId') or not coupon.get('couponCode'):
-            continue
-        codes = {p['productCode'] for p in coupon.get('products', [])}
-        for item in meal['items']:
-            if item['id'] in codes:
-                offers.append({'id': 'coupon:' + coupon['couponId'] + ':' + item['id'],
-                               'label': coupon.get('title', '门店可用券'), 'covers': {item['id']: 1},
-                               'request_item': {**item['request_item'], 'couponId': coupon['couponId'], 'couponCode': coupon['couponCode']},
-                               'exclusive_groups': ['coupon:' + coupon['couponId']],
-                               'conditions': coupon.get('tradeDateTime', '本店当前可用，核价确认'),
-                               'evidence': 'query-store-coupons 的当前门店适用商品编码'})
-    chosen_names = [c['name'] for i in meal['items'] for c in i['components']]
-    bundles = [(code, e) for code, e in menu['data']['meals'].items()
-               if not e.get('canWithOrder') and re.search('套餐|件套|随心配|单人餐', e['name'])]
-    bundles.sort(key=lambda pair: (not any(n in pair[1]['name'] for n in chosen_names), '随心配' not in pair[1]['name'], pair[0]))
-    checked = 0
-    for code, entity in bundles[:12]:
-        checked += 1
-        try:
-            detail = call('query-meal-detail', {**context, 'code': code})['data']
-        except ToolBusinessError:
-            warnings.append('某套餐详情查询失败，本轮未比较该入口')
-            continue
-        offers.extend(bundle_offers(detail, meal))
-    offers_trimmed = len(offers) > 40
-    if offers_trimmed:
-        offers = offers[:40]
-    catalog = {'draw_id': meal['draw_id'], 'mode': 'live', 'store': meal['store'], 'context': meal['context'],
-               'offers': offers, 'scope': f'单点、{"当前门店已有券" if coupon_count is not None else "券未验证"}与 {checked} 个套餐入口；不含付费开卡或新增领券' + ('；' + '；'.join(dict.fromkeys(warnings)) if warnings else '')}
-    plans = optimize(meal, catalog)
-    plans['truncated'] = plans['truncated'] or offers_trimmed
-    quotes = []
-    for plan in plans['plans']:
-        request = {**context, 'items': [o['request_item'] for o in plan['offers']]}
-        try:
-            response = call('calculate-price', request)
-            price = amount_to_fen(response['data']['price'], 'fen')
-            quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
-                           'status': 'success', 'payable_fen': price, 'quoted_at': response['datetime'],
-                           'source': '麦当劳 MCP calculate-price /data/price，单位分'})
-        except ToolBusinessError as exc:
-            quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
-                           'status': 'failed', 'reason': str(exc)})
-            continue
-        except (ValueError, KeyError, TypeError) as exc:
-            quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
-                           'status': 'failed', 'reason': str(exc)})
-            break
-    return {'meal': meal, 'comparison': select_best(meal, plans, quotes),
-            'verification': {'store_coupon_count': coupon_count, 'menu_items': len(menu['data']['meals']),
-                             'eligible_items': len(snapshot['items']), 'bundle_entries_checked': checked,
-                             'successful_quotes': sum(q['status'] == 'success' for q in quotes),
-                             'store_selection': '指定门店' if store_code else '接口返回的首家营业门店',
-                             'network_retries': getattr(client, 'retry_count', 0),
-                             'detail_failures': detail_failures, 'warnings': warnings,
-                             'excluded': snapshot['skipped']}}
+    result = price_saved(client,meal,menu=menu,details=details,revalidate=False)
+    result['verification'].update(eligible_items=len(snapshot['items']),detail_failures=detail_failures,
+                                  excluded=snapshot['skipped'],store_selection='指定门店' if store_code else '接口返回的首家营业门店')
+    return result

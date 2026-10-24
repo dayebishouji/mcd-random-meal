@@ -1,0 +1,57 @@
+{
+  "kind": "对已保存的6样餐单重新核价，没有新抽取",
+  "store": {
+    "id": "1420450",
+    "name": "麦当劳深圳福田高铁站餐厅",
+    "address": "福田地铁站时尚美食广场D区"
+  },
+  "items": [
+    {
+      "name": "脆薯饼",
+      "kind": "side"
+    },
+    {
+      "name": "可乐小杯",
+      "kind": "drink"
+    },
+    {
+      "name": "麦乐鸡5块",
+      "kind": "side"
+    },
+    {
+      "name": "灰焰圆筒",
+      "kind": "dessert"
+    },
+    {
+      "name": "麦麦脆汁鸡-琵琶腿",
+      "kind": "side"
+    },
+    {
+      "name": "那么大鸡排（椒盐风味）",
+      "kind": "side"
+    }
+  ],
+  "basket_preserved": true,
+  "observed_at": "2026-10-24 14:00:10",
+  "quoted_at": "2026-10-24 15:21:45",
+  "previous_payable_fen": 6550,
+  "baseline_fen": 6550,
+  "payable_fen": 6550,
+  "labels": [
+    "脆薯饼单点",
+    "可乐小杯单点",
+    "麦乐鸡5块单点",
+    "灰焰圆筒单点",
+    "麦麦脆汁鸡-琵琶腿单点",
+    "那么大鸡排（椒盐风味）单点"
+  ],
+  "scope": "固定餐单；检查 32/32 个套餐/随心配入口、单点及当前门店已有券；不含主动领券或开卡",
+  "truncated": false,
+  "successful_quotes": 1,
+  "failed_quotes": 0,
+  "pending_quotes": 0,
+  "bundle_entries_checked": 32,
+  "bundle_entries_total": 32,
+  "coupon_count": 0,
+  "additional_attempt": "历史固定3样对照餐单本轮详情查询业务校验失败，未取得新报价；原历史回执不更新、不移用为当前价格"
+}

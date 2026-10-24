@@ -8,6 +8,8 @@ from pathlib import Path
 from meal import amount_to_fen, draw, optimize, select_best, validate_draw
 from mcp_readonly import ALLOWED, MCP, ToolBusinessError, pointer, tool_data
 from report import render
+from external import compare_external
+from request_binding import same_contents
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -25,6 +27,14 @@ def write(path, value):
 def demo(no_main=False, seed=None, count=3):
     snapshot = read(ROOT / 'examples' / 'demo.json')
     meal = draw(snapshot, no_main=no_main, seed=seed, count=count)
+    return price_demo(meal)
+
+
+def price_demo(meal, external=None):
+    validate_draw(meal)
+    if meal['mode'] != 'demo':
+        raise ValueError('模拟核价只能用于明确标注的 demo 餐单')
+    snapshot = read(ROOT / 'examples' / 'demo.json')
     catalog = {'draw_id': meal['draw_id'], 'mode': 'demo', 'store': meal['store'],
                'context': meal['context'], 'offers': snapshot['offers'],
                'scope': '虚构单点、等价套餐与演示券；不对应官方优惠'}
@@ -33,7 +43,10 @@ def demo(no_main=False, seed=None, count=3):
                'payable_fen': sum(o['demo_fen'] for o in p['offers']),
                'quoted_at': snapshot['observed_at'], 'source': '虚构演示定价，非官方核价'}
               for p in plans['plans']]
-    return {'meal': meal, 'comparison': select_best(meal, plans, quotes)}
+    result = {'meal':meal,'comparison':select_best(meal,plans,quotes)}
+    if external is not None:
+        result['external_comparison'] = compare_external(meal,external,lambda remaining:price_demo(remaining)['comparison'])
+    return result
 
 
 def quote_requests(meal, plans, prepared, client, total_pointer, unit):
@@ -62,6 +75,9 @@ def quote_requests(meal, plans, prepared, client, total_pointer, unit):
         expected_items = [o['request_item'] for o in plan['offers']]
         if arguments['items'] != expected_items:
             raise ValueError('核价请求更改了已验证购买选项')
+        selected_requests = [i.get('request_item') for i in meal['items']]
+        if not all(selected_requests) or not same_contents(arguments['items'],selected_requests):
+            raise ValueError('原餐单请求规格缺失，或套餐实际餐品、份数和特调与原餐单不一致')
         try:
             result = client.call('calculate-price', arguments)
             payload = tool_data(result)
@@ -103,6 +119,11 @@ def main():
     p.add_argument('--count', type=int, choices=range(1, 7), default=3, help='推荐数量 1–6，默认 3')
     p.add_argument('--output', default=str(ROOT / 'local' / 'live.json'))
     p.add_argument('--html', default=str(ROOT / 'local' / 'live.html'))
+    p = commands.add_parser('reprice', help='保留原餐单，重新查询套餐、随心配与门店券并核价')
+    p.add_argument('--input', default=str(ROOT / 'local' / 'live.json'), help='原推荐结果JSON或 draw.json')
+    p.add_argument('--external-offers', help='用户提供的外部平台券价与覆盖范围JSON，只作参考比较')
+    p.add_argument('--output', default=str(ROOT / 'local' / 'repriced.json'))
+    p.add_argument('--html', default=str(ROOT / 'local' / 'repriced.html'))
     p = commands.add_parser('doctor', help='检查安装、环境变量和只读 MCP 连接')
     p.add_argument('--offline', action='store_true', help='仅检查安装和离线流程，不发网络请求')
     p.add_argument('--output', default=str(ROOT / 'local' / 'doctor.json'))
@@ -132,6 +153,18 @@ def main():
     args = parser.parse_args()
     if args.command == 'demo':
         result = demo(args.no_main, args.seed, args.count)
+    elif args.command == 'reprice':
+        original = read(args.input)
+        meal = original.get('meal',original)
+        validate_draw(meal)
+        external = read(args.external_offers) if args.external_offers else None
+        if meal['mode'] == 'demo':
+            result = price_demo(meal,external)
+        else:
+            from pricing import price_saved
+            client = MCP()
+            client.connect()
+            result = price_saved(client,meal,external=external)
     elif args.command == 'doctor':
         import os
         token = os.environ.get('MCD_MCP_TOKEN', '').strip()

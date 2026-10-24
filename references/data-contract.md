@@ -52,11 +52,11 @@ python scripts/main.py compare --draw local/draw.json --plans local/plans.json -
 - `exclusive_groups`：可选字符串数组，例如同一张一次性券使用相同分组，防止重复用券。分组不代表服务端已确认券间可叠加；最终仍需整单核价。
 - `scope` 位于 catalog 根：列出本轮收集的优惠范围和未覆盖部分。
 
-`plan` 只枚举 `covers` 恰好等于目标餐单的组合，过滤加购及数量变化。最多40个选项，最多24份购买方案，搜索最多20000节点；截断会明确标出。
+`plan` 只枚举 `covers` 恰好等于目标餐单的组合，过滤加购及数量变化。最多120个选项，最多64份购买方案，搜索最多20000节点；截断会明确标出。
 
 ## 真实核价与 quotes.json
 
-`requests.json` 格式为 `{"draw_id":"本次标识","requests":{"方案id":{完整calculate-price参数}}}`。每个请求的 `items` 必须逐项等于该计划的 `request_item`，门店和场景必须一致。默认金额路径 `/data/price`、单位 `fen`；变更只能依据当前官方 schema，命令参数为 `--amount-pointer` 和 `--unit`。
+`requests.json` 格式为 `{"draw_id":"本次标识","requests":{"方案id":{完整calculate-price参数}}}`。每个请求的 `items` 必须逐项等于该计划的 `request_item`，实际子项编码、份数和特调必须与原餐单 `request_item` 一致，门店和场景必须一致。默认金额路径 `/data/price`、单位 `fen`；变更只能依据当前官方 schema，命令参数为 `--amount-pointer` 和 `--unit`。
 
 宿主通过原生 MCP 核价时，把每次回执规范化成数组：
 

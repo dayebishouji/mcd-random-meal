@@ -104,7 +104,7 @@ def draw(snapshot, no_main=False, count=3, seed=None):
     return result
 
 
-def optimize(meal, catalog, max_plans=24):
+def optimize(meal, catalog, max_plans=64):
     """Enumerate exact covers; prices must be whole-order quotes, never coupon arithmetic."""
     validate_draw(meal)
     if catalog.get('draw_id') != meal['draw_id'] or catalog.get('mode') != meal['mode']:
@@ -112,13 +112,13 @@ def optimize(meal, catalog, max_plans=24):
     if catalog.get('store') != meal['store'] or catalog.get('context') != meal['context']:
         raise ValueError('优惠候选的门店或取餐场景与本次推荐不一致')
     offers = catalog.get('offers', [])
-    if not 0 < len(offers) <= 40:
-        raise ValueError('每轮支持 1 至 40 个已核实购买选项')
+    if not 0 < len(offers) <= 120:
+        raise ValueError('每轮支持 1 至 120 个已核实购买选项')
     target = Counter(meal['basket'])
     eligible = []
     seen = set()
     for offer in offers:
-        if not offer.get('id') or offer['id'] in seen:
+        if not isinstance(offer.get('id'),str) or not offer['id'] or offer['id'] in seen:
             raise ValueError('购买选项编码必须唯一')
         seen.add(offer['id'])
         cover = offer.get('covers', {})
@@ -131,7 +131,24 @@ def optimize(meal, catalog, max_plans=24):
     plans = []
     truncated = False
     visits = 0
-    # Combinations are bounded by a maximum six-item basket and forty offers.
+    eligible.sort(key=lambda offer:(-sum(offer['covers'].values()),offer['id'].startswith('single:'),offer['id']))
+    plan_keys = set()
+    def append_plan(chosen):
+        nonlocal truncated
+        ids = [offer['id'] for offer in chosen]
+        key = tuple(sorted(ids))
+        if key in plan_keys:
+            return
+        if len(plans) >= max_plans:
+            truncated = True
+            return
+        plan_keys.add(key)
+        plans.append({'id':fingerprint([meal['draw_id'],ids])[:20], 'offer_ids':ids,
+                      'labels':[o['label'] for o in chosen],'conditions':[o.get('conditions','无额外条件') for o in chosen], 'offers':chosen})
+    baseline = [next((o for o in eligible if o['id'].startswith('single:') and o['covers']=={code:quantity}),None) for code,quantity in target.items()]
+    if baseline and all(baseline):
+        append_plan(baseline)
+    # Reserve a single-order baseline, then consider larger matching deals first.
     def search(start, remaining, chosen, groups):
         nonlocal truncated, visits
         visits += 1
@@ -139,14 +156,7 @@ def optimize(meal, catalog, max_plans=24):
             truncated = True
             return
         if not remaining:
-            if len(plans) >= max_plans:
-                truncated = True
-                return
-            ids = [offer['id'] for offer in chosen]
-            plans.append({'id': fingerprint([meal['draw_id'], ids])[:20],
-                          'offer_ids': ids, 'labels': [o['label'] for o in chosen],
-                          'conditions': [o.get('conditions', '无额外条件') for o in chosen],
-                          'offers': chosen})
+            append_plan(chosen)
             return
         for index in range(start, len(eligible)):
             if truncated:

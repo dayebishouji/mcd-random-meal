@@ -29,6 +29,11 @@ def render(result):
     offer = ' + '.join(best['labels']) if best else '尚无成功核价方案'
     savings = '较本轮单点核价节省 ' + money(comparison['savings_fen']) if comparison.get('savings_fen') is not None else '未取得单点对照核价，暂不计算节省金额'
     store = meal['store']
+    external = result.get('external_comparison')
+    external_section = ''
+    if external:
+        references = ''.join(f'<article><h3>{escape(o["platform"])} · {escape(o["label"])}</h3><p>外部券参考合计 {money(o["reference_total_fen"])}</p><div class="fine">购券 {money(o["purchase_fen"])} + 补差/费用 {money(o["extra_fen"])} + 余餐 {money(o["remaining_fen"])}<br>余餐买法：{escape(" + ".join(o["remaining_plan"]) or "全部餐品已覆盖")}<br>{"用户已自行核对条件，未向平台验证" if o["confirmed"] else "适用条件尚未核对"}；{escape(o["conditions"])}<br>{escape(o["source"])}；余餐失败/待核价 {o["remaining_unquoted"]} 份，{"已截断" if o["remaining_truncated"] else "未截断"}</div></article>' for o in external['offers'])
+        external_section = '<section><h2>外部平台券 · 人工参考</h2><p class="fine">'+escape(external['notice'])+'</p>'+references+'</section>'
     return f'''<!doctype html>
 <html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>听天由麦 · 随机餐单</title><style>
@@ -37,6 +42,6 @@ def render(result):
 <style>.product-image{{height:160px;position:relative;margin:-5px 0 20px;display:grid;place-items:center}}.product-image>span{{font-size:12px;color:#655b4e}}.product-image img{{position:absolute;width:100%;height:100%;object-fit:contain;background:white}}.product-image img[hidden]{{display:none}}</style>
 <h1>这一餐，随机决定。</h1><p class="intro">本轮 {len(meal['items'])} 样 · {'不要主食 · 已排除汉堡、卷、饭、面、三明治等主食' if meal['no_main'] else '默认带主食 · 恰好一份主食'}<br>先随机选餐，再为同一份餐单比较购买方式。</p>
 <div class="cards">{''.join(cards)}</div><div class="summary"><div class="metric">{'演示最低报价' if demo else '本轮最低核价'}<strong>{money(best['payable_fen'] if best else None)}</strong><small>{escape(offer)}<br>{escape(savings)}</small></div><div class="metric">{'模拟' if demo else '已知'}总热量<strong>{kcal} <small>kcal</small></strong><small>{escape(note)}</small></div></div>
-<div class="store"><b>{escape(store['name'])}</b><br>{escape(store['address'])}<br><span class="fine">到店取餐 · 数据时间 {escape(meal['observed_at'])}</span></div>
+<div class="store"><b>{escape(store['name'])}</b><br>{escape(store['address'])}<br><span class="fine">到店取餐 · 菜单快照 {escape(meal['observed_at'])} · 本轮最低报价时间 {escape(best.get('quoted_at','未知') if best else '未成功核价')}</span></div>
 <section><h2>同样的餐品，比较怎么买</h2><p class="fine">{escape(comparison.get('conclusion', '尚未核价'))}。比较范围：{escape(comparison.get('scope', '尚未收集'))}{limit}。失败或待核价方案 {failure_count} 份。</p><table><thead><tr><th>购买组合</th><th>整单金额</th><th>使用条件</th></tr></thead><tbody>{rows or '<tr><td colspan="3">暂时没有成功核价结果，菜单参考价不能代替实付价。</td></tr>'}</tbody></table></section>
-<footer class="fine">{escape(meal['random_policy'])}<br>随机结果可能重复；重新抽取会改变餐单，需要重新核价。热量缺失不当作零；不根据未知配方估算热量。<br>餐品图按官方菜单返回的地址引用，权利归麦当劳及相关权利人；图片仅作示意，实际规格以文字为准，图片加载可能需要联网。<br>个人原创参赛作品，非麦当劳官方产品。{'此页的门店、价格、热量与优惠为虚构演示，不可用于下单。' if demo else '本页记录当次查询结果，非持续更新的实时菜单。'}</footer></main></html>'''
+{external_section}<footer class="fine">{escape(meal['random_policy'])}<br>随机结果可能重复；重新抽取会改变餐单，需要重新核价。热量缺失不当作零；不根据未知配方估算热量。<br>餐品图按官方菜单返回的地址引用，权利归麦当劳及相关权利人；图片仅作示意，实际规格以文字为准，图片加载可能需要联网。<br>个人原创参赛作品，非麦当劳官方产品。{'此页的门店、价格、热量与优惠为虚构演示，不可用于下单。' if demo else '本页记录当次查询结果，非持续更新的实时菜单。'}</footer></main></html>'''
