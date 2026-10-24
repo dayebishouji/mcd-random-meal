@@ -1,0 +1,124 @@
+{
+  "kind": "固定餐单优惠回归验证，非随机推荐结果",
+  "store": {
+    "storeCode": "1420450",
+    "storeName": "麦当劳深圳福田高铁站餐厅",
+    "address": "福田地铁站时尚美食广场D区"
+  },
+  "items": [
+    {
+      "name": "小杯玉米杯",
+      "kcal": 53.0
+    },
+    {
+      "name": "麦香鸡",
+      "kcal": 369.0
+    },
+    {
+      "name": "锡兰红茶",
+      "kcal": 2.0
+    }
+  ],
+  "nutrition": {
+    "known_kcal": 424.0,
+    "complete": true,
+    "missing": []
+  },
+  "comparison": {
+    "best": {
+      "plan_id": "7d0952752fb76b789401",
+      "payable_fen": 2440,
+      "quoted_at": "2026-10-24 11:46:12",
+      "source": "calculate-price /data/price，单位分",
+      "labels": [
+        "锡兰红茶单点",
+        "精选超值随心配"
+      ],
+      "conditions": [
+        "无额外条件",
+        "相同餐品与份数，标准特调；官方整单核价确认"
+      ]
+    },
+    "quotes": [
+      {
+        "plan_id": "7d0952752fb76b789401",
+        "payable_fen": 2440,
+        "quoted_at": "2026-10-24 11:46:12",
+        "source": "calculate-price /data/price，单位分",
+        "labels": [
+          "锡兰红茶单点",
+          "精选超值随心配"
+        ],
+        "conditions": [
+          "无额外条件",
+          "相同餐品与份数，标准特调；官方整单核价确认"
+        ]
+      },
+      {
+        "plan_id": "8d2a188bfba15d0e4f76",
+        "payable_fen": 2440,
+        "quoted_at": "2026-10-24 11:46:11",
+        "source": "calculate-price /data/price，单位分",
+        "labels": [
+          "锡兰红茶单点",
+          "人气经典随心配"
+        ],
+        "conditions": [
+          "无额外条件",
+          "相同餐品与份数，标准特调；官方整单核价确认"
+        ]
+      },
+      {
+        "plan_id": "8a08bbba96ccd1637bbe",
+        "payable_fen": 2690,
+        "quoted_at": "2026-10-24 11:46:11",
+        "source": "calculate-price /data/price，单位分",
+        "labels": [
+          "小杯玉米杯单点",
+          "精选超值随心配"
+        ],
+        "conditions": [
+          "无额外条件",
+          "相同餐品与份数，标准特调；官方整单核价确认"
+        ]
+      },
+      {
+        "plan_id": "c03f47af82411c8118c5",
+        "payable_fen": 2690,
+        "quoted_at": "2026-10-24 11:46:11",
+        "source": "calculate-price /data/price，单位分",
+        "labels": [
+          "小杯玉米杯单点",
+          "人气经典随心配"
+        ],
+        "conditions": [
+          "无额外条件",
+          "相同餐品与份数，标准特调；官方整单核价确认"
+        ]
+      },
+      {
+        "plan_id": "d0d668382351cac0e99c",
+        "payable_fen": 4000,
+        "quoted_at": "2026-10-24 11:46:11",
+        "source": "calculate-price /data/price，单位分",
+        "labels": [
+          "小杯玉米杯单点",
+          "麦香鸡单点",
+          "锡兰红茶单点"
+        ],
+        "conditions": [
+          "无额外条件",
+          "无额外条件",
+          "无额外条件"
+        ]
+      }
+    ],
+    "failed": [],
+    "baseline_fen": 4000,
+    "savings_fen": 1560,
+    "pending": [],
+    "truncated": false,
+    "scope": "固定测试餐单；单点与两个随心配入口",
+    "conclusion": "本轮成功核价方案中的最低价"
+  }
+}
