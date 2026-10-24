@@ -120,7 +120,7 @@
   const icons = { burger: '🍔', 'chicken-burger': '🍔', 'fish-burger': '🍔', wrap: '🌯', fries: '🍟', nuggets: '🍗', corn: '🌽', wings: '🍗', cola: '🥤', zero: '🥤', tea: '☕', pie: '🥧', icecream: '🍦' };
   const colors = { main: '#ffd43b', side: '#e5bda0', drink: '#d9e8b5', dessert: '#edb8b2' };
   const storageKey = 'mcd-random-meal:v1';
-  let noMain = false, quantity = 3, count = 0, selected = [], comparison, busy = false, currentExample = false, renderVersion = 0;
+  let noMain = false, quantity = 3, count = 0, selected = [], comparison, busy = false, currentExample = false, renderVersion = 0, repriceCount = 0;
   api.current = () => ({ data, items: selected.slice() });
   let recent = [], storageAvailable = true, saved = {}, storedText = null;
   try { storedText = root.localStorage.getItem(storageKey); }
@@ -150,6 +150,10 @@
   function closeBundlePicker() {
     $('bundle-picker').hidden=true;
     $('bundle-button').setAttribute('aria-expanded','false');
+  }
+  function revealMeal() {
+    $('draw-status').focus({preventScroll:true});
+    $('action-status').scrollIntoView({block:'start',behavior:root.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
   }
   function updateBundleEntry() {
     const sizes=[...new Set(bundleCandidates(data,noMain).map(items=>items.length))].sort();
@@ -208,12 +212,14 @@
     $('total-kcal').textContent = `${items.reduce((sum, i) => sum + (i.kcal || 0), 0)} kcal${complete ? '' : '（仅已知部分）'}`;
     $('best-label').textContent = comparison.best ? `模拟买法：${comparison.best.labels.map(s => s.replaceAll('演示', '')).join(' ＋ ')}。仅比较已收集方案${comparison.truncated ? '，本轮方案已截断' : ''}；一单最多一张模拟券。` : '本轮没有可比较方案。';
     $('quote-count').textContent = `${comparison.plans.length} 份`;
-    $('quote-list').innerHTML = comparison.plans.map(p => `<div class="quote-row"><span>${escape(p.labels.map(s => s.replaceAll('演示', '')).join(' ＋ '))}</span><b>${money(p.amount)}</b></div>`).join('');
+    $('quote-list').innerHTML = comparison.plans.map(p => `<div class="quote-row"><span>${escape(p.labels.map(s => s.replaceAll('演示', '')).join(' ＋ '))}</span><b>${money(p.amount)}</b></div>`).join('') || '<p>暂无可比较方案，请重新比价或稍后再试。</p>';
     $('quote-details').open = false;
     $('store-name').textContent = data.store.name;
     $('store-address').textContent = data.store.address;
     $('copy-status').textContent = '';
     $('share-status').textContent = '';
+    $('reprice-status').textContent = '';
+    $('history-status').textContent = '';
     $('manual-copy').hidden = true;
     $('action-status').textContent = source === 'bundle' ? '已按数量和主食偏好随机选出套餐餐单，再比较同样餐品的模拟买法。' : source === 'random' ? '开饭签已揭晓。看看手气，再看看账单。' : currentExample ? '已展示固定模拟案例，可展开小票比较买法。' : '已恢复同一份模拟餐单，价格按当前演示数据重算。';
     document.querySelector('.workspace').classList.remove('dealing');
@@ -247,7 +253,7 @@
     $('action-status').textContent = `骰子转一圈，正在揭晓 ${quantity} 样餐品…`;
     if(bundleOnly) $('bundle-feedback').textContent=`正在生成${quantity}样套餐…`;
     root.setTimeout(() => {
-      try { const items = bundleOnly ? drawBundle(data,noMain,randomInt,quantity) : draw(data, noMain, randomInt, quantity); count++; show(items,bundleOnly?'bundle':'random'); if(bundleOnly) document.querySelector('.workspace').scrollIntoView({block:'start',behavior:root.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'}); }
+      try { const items = bundleOnly ? drawBundle(data,noMain,randomInt,quantity) : draw(data, noMain, randomInt, quantity); count++; show(items,bundleOnly?'bundle':'random'); if(bundleOnly) revealMeal(); }
       catch (_) { mode(previousMode); quantity = previousQuantity; $('quantity-select').value = String(quantity); $('action-status').textContent = bundleOnly ? '这次没能生成套餐，请重新选择套餐样数或稍后再试；原餐单已保留。' : '这次没能抽取，当前可选餐品不足或随机源不可用。请调整数量或刷新后再试。'; if(bundleOnly) $('bundle-feedback').textContent=$('action-status').textContent; }
       finally { setBusy(false); loadShared(); }
     }, root.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 360);
@@ -296,6 +302,9 @@
     show(selected.slice(), currentExample ? 'example' : 'restored', false);
     $('draw-status').textContent = '保留餐单 · 已重新比价';
     $('action-status').textContent = '餐品和份数未变，已按当前模拟优惠重新比价。真实价格请在 Skill 中重新核价。';
+    repriceCount++;
+    $('reprice-status').textContent = `本页第${repriceCount}次重新比价：${comparison.best ? '本轮模拟最低价 '+money(comparison.best.amount) : '暂无可比较方案'}。餐品和份数未变；模拟优惠未变时价格也会相同。`;
+    $('reprice-status').scrollIntoView({block:'nearest',behavior:'instant'});
   });
   $('hero-draw').addEventListener('click', event => { if (busy) event.preventDefault(); else { clearSharedHash(); redraw(); } });
   $('with-main').addEventListener('click', () => { clearSharedHash(); redraw(false); });
@@ -304,6 +313,7 @@
   $('example-button').addEventListener('click', () => {
     clearSharedHash(); mode(false);
     show(['burger', 'fries', 'cola'].map(id => data.items.find(i => i.id === id)), 'example');
+    revealMeal();
   });
   $('copy-button').addEventListener('click', () => {
     const text = `听天由麦｜${currentExample ? '固定模拟案例' : '模拟餐单'}\n${selected.map(i => `${i.name} × 1`).join('\n')}\n本轮模拟最低价：${comparison.best ? money(comparison.best.amount) : '无可比较方案'}\n${$('total-kcal').textContent}\n${data.store.name}，${data.store.address}\n全部为虚构演示，不可用于下单。\nhttps://github.com/dayebishouji/mcd-random-meal`;
@@ -318,12 +328,14 @@
     const button = event.target.closest('[data-history]');
     if (!button || busy) return;
     const entry = recent[Number(button.dataset.history)];
-    if (entry) { clearSharedHash(); restore(entry); }
+    if (entry) { clearSharedHash(); restore(entry); revealMeal(); }
   });
   $('clear-history').addEventListener('click', () => {
     recent = []; renderHistory(); persist();
     $('action-status').textContent = '最近记录已清空，当前餐单仍保留。';
-    $('draw-button').focus();
+    $('history-status').textContent = '最近记录已清空，当前餐单仍保留。';
+    $('history-title').focus({preventScroll:true});
+    $('history-status').scrollIntoView({block:'nearest',behavior:'instant'});
   });
   for (const [id, key] of [['budget-input', 'budget'], ['kcal-input', 'kcal']]) {
     const input = $(id), value = saved[key];
@@ -340,7 +352,7 @@
   function loadShared() {
     if (!root.location.hash.startsWith('#meal=')) return false;
     const entry = sharedMeal();
-    if (entry) restore(entry, 'shared');
+    if (entry) { restore(entry, 'shared'); revealMeal(); }
     else $('action-status').textContent = '这个餐单链接无效或已不适用，已保留当前餐单。可以重新抽一组。';
     return !!entry;
   }

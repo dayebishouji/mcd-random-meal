@@ -147,6 +147,8 @@ python -m unittest discover -s tests -v
 
 浏览器回归测试需另行安装 Playwright 和 Chromium。在下面的本地预览服务运行时，执行 `python tests/web_ui.py`；也可通过 `--browser-path` 指向本机 Edge。28组测试覆盖重复点击、键盘操作、分享恢复、历史记录、非法链接、输入校验、存储/剪贴板拒绝、未知热量、空报价、餐品库、套餐推荐及其约束、不匹配数量的显式选择、就近反馈、外部券参考计算与失效处理，以及320–1440像素宽度。已在 Edge 和 Chromium 通过，不代表对所有浏览器或未来数据都能保证零错误。
 
+`python tests/web_controls.py` 另查390和1440像素下的按钮反馈、面板、导航链接及表单。重新比价会在按钮旁显示本次金额；恢复历史、查看固定例子和打开分享链接会定位到餐单；清空记录后在原位置提示，空报价展开后也有说明。
+
 本地预览：`python -m http.server 8765 --directory docs`，然后打开 `http://localhost:8765`。
 
 ## 许可证
