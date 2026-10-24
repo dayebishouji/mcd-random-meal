@@ -2,6 +2,7 @@
 
 import json
 import os
+import time
 import urllib.error
 import urllib.request
 
@@ -16,17 +17,29 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
         return None
 
 
+class ToolBusinessError(ValueError):
+    """One candidate failed business validation; other fixed-basket plans may work."""
+
+
 class MCP:
-    def __init__(self):
+    def __init__(self, max_retries=2):
         self.token = os.environ.get('MCD_MCP_TOKEN', '').strip()
         if not self.token or self.token.startswith('${'):
-            raise ValueError('请在本机设置 MCD_MCP_TOKEN，或使用宿主现有的麦当劳连接器')
+            raise ValueError('未配置 MCD_MCP_TOKEN。请在本机私有环境设置后运行 doctor，或使用宿主现有的麦当劳连接器')
+        if type(max_retries) is not int or not 0 <= max_retries <= 2:
+            raise ValueError('网络重试次数应为 0–2')
+        self.max_retries = max_retries
+        self.retry_count = 0
         self.session = None
         self.protocol = None
         self.counter = 0
         self.opener = urllib.request.build_opener(NoRedirect)
 
     def rpc(self, method, params=None, notification=False):
+        if method not in ('initialize', 'notifications/initialized', 'tools/list', 'tools/call'):
+            raise ValueError('本程序只允许只读 MCP 会话与工具请求')
+        if method == 'tools/call' and (not isinstance(params, dict) or params.get('name') not in ALLOWED):
+            raise ValueError('本程序仅允许餐品、门店、优惠查询和核价')
         self.counter += 1
         payload = {'jsonrpc': '2.0', 'method': method}
         if params is not None:
@@ -40,6 +53,30 @@ class MCP:
         if self.protocol:
             headers['MCP-Protocol-Version'] = self.protocol
         request = urllib.request.Request('https://mcp.mcd.cn', data=json.dumps(payload).encode(), headers=headers)
+        for attempt in range(self.max_retries + 1):
+            try:
+                return self.request(request, payload, notification)
+            except urllib.error.HTTPError as exc:
+                code = exc.code
+                exc.close()
+                if code in (500, 502, 503, 504) and attempt < self.max_retries:
+                    self.retry_count += 1
+                    time.sleep(0.5 * (2 ** attempt))
+                    continue
+                hints = {401: 'Token 无效或已过期，请在官方控制台更新本机凭据并运行 doctor',
+                         403: '当前账号或 Token 无访问权限，请检查官方控制台权限',
+                         429: '已触发限流，请按官方提示稍后重试，不自动重发',
+                         404: '服务或会话不可用，请运行 doctor 后重新执行',
+                         400: '请求参数不符合当前接口，请核对实际 schema'}
+                raise ValueError(f'MCP HTTP {code}；' + hints.get(code, '服务暂时不可用，有限重试已结束，请稍后重新执行')) from None
+            except (urllib.error.URLError, TimeoutError, ConnectionError):
+                if attempt < self.max_retries:
+                    self.retry_count += 1
+                    time.sleep(0.5 * (2 ** attempt))
+                    continue
+                raise ValueError('MCP 网络请求失败，有限重试已结束。请检查网络后运行 doctor；不会改用模拟数据或重抽餐单') from None
+
+    def request(self, request, payload, notification):
         try:
             with self.opener.open(request, timeout=35) as response:
                 self.session = response.headers.get('Mcp-Session-Id', self.session)
@@ -62,10 +99,8 @@ class MCP:
                 if message.get('id') != payload['id']:
                     raise ValueError('MCP 响应与当前请求不匹配')
                 return self.unwrap(message)
-        except urllib.error.HTTPError as exc:
-            raise ValueError(f'MCP HTTP {exc.code}；本轮停止，不自动重试') from None
-        except (urllib.error.URLError, TimeoutError):
-            raise ValueError('MCP 网络请求失败；本轮停止，不自动重试') from None
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            raise ValueError('MCP 返回格式无法解析，请运行 doctor 检查服务；本轮停止，不使用其中的金额') from None
 
     @staticmethod
     def unwrap(message):
@@ -100,7 +135,7 @@ class MCP:
 
 def tool_data(result):
     if result.get('isError'):
-        raise ValueError('MCP 工具返回失败；不使用失败响应中的金额')
+        raise ToolBusinessError('此方案被 MCP 工具拒绝；不使用失败响应中的金额')
     if isinstance(result.get('structuredContent'), dict):
         payload = result['structuredContent']
     else:
@@ -121,8 +156,10 @@ def tool_data(result):
                         continue
             if payload is not None:
                 break
-    if payload is None or payload.get('success') is not True:
+    if payload is None:
         raise ValueError('未找到明确成功的业务响应，请检查当前工具返回结构')
+    if payload.get('success') is not True:
+        raise ToolBusinessError('此方案业务校验失败；不使用失败响应中的金额')
     return payload
 
 

@@ -53,18 +53,25 @@ def validate_snapshot(snapshot):
     return snapshot
 
 
-def conditional_sample(required, others, count, rng):
-    """Uniformly sample size-count subsets containing at least one required item."""
+def single_person_sample(pool, count, no_main, rng):
+    """Uniform subsets under main preference and at most one drink/dessert each."""
+    groups = [[i for i in pool if i['kind'] == kind] for kind in ('main', 'side', 'drink', 'dessert')]
     weights = []
-    for k in range(1, min(count, len(required)) + 1):
-        if count - k <= len(others):
-            weights.append((k, math.comb(len(required), k) * math.comb(len(others), count-k)))
+    for mains in range(0 if no_main else 1, min(count, len(groups[0])) + 1):
+        for drinks in range(min(1, count, len(groups[2])) + 1):
+            for desserts in range(min(1, count, len(groups[3])) + 1):
+                sides = count - mains - drinks - desserts
+                if not 0 <= sides <= len(groups[1]) or (no_main and mains) or mains + sides + desserts < 1:
+                    continue
+                sizes = (mains, sides, drinks, desserts)
+                weight = math.prod(math.comb(len(group), size) for group, size in zip(groups, sizes))
+                weights.append((sizes, weight))
     if not weights:
-        raise ValueError('当前餐品不足以满足随机规则，请调整餐品数量或门店')
+        raise ValueError('当前餐品不足以满足单人餐规则：饮品和甜品各最多1份；请减少数量或更换门店')
     ticket = rng.randrange(sum(weight for _, weight in weights))
-    for k, weight in weights:
+    for sizes, weight in weights:
         if ticket < weight:
-            selected = rng.sample(required, k) + rng.sample(others, count-k)
+            selected = [item for group, size in zip(groups, sizes) for item in rng.sample(group, size)]
             rng.shuffle(selected)
             return selected
         ticket -= weight
@@ -80,12 +87,7 @@ def draw(snapshot, no_main=False, count=3, seed=None):
     pool = [item for item in snapshot['items'] if item.get('selectable') is True and item['kind'] != 'unknown']
     if no_main:
         pool = [item for item in pool if item['kind'] != 'main']
-        required = [item for item in pool if item['kind'] != 'drink']
-        others = [item for item in pool if item['kind'] == 'drink']
-    else:
-        required = [item for item in pool if item['kind'] == 'main']
-        others = [item for item in pool if item['kind'] != 'main']
-    selected = conditional_sample(required, others, count, random.Random(seed) if seed is not None else random.SystemRandom())
+    selected = single_person_sample(pool, count, no_main, random.Random(seed) if seed is not None else random.SystemRandom())
     missing = [item['name'] for item in selected if item.get('kcal') is None]
     menu_known = all(item.get('menu_fen') is not None for item in selected)
     result = {
@@ -95,7 +97,7 @@ def draw(snapshot, no_main=False, count=3, seed=None):
         'nutrition': {'known_kcal': round(sum(item.get('kcal') or 0 for item in selected), 2),
                       'complete': not missing, 'missing': missing},
         'menu_total_fen': sum(item['menu_fen'] for item in selected) if menu_known else None,
-        'random_policy': '等概率抽取符合条件的不同餐品组合，不按价格或热量加权；至少一份食物',
+        'random_policy': '单人餐：饮品与甜品各最多1份、至少一份食物；等概率抽取符合条件的不同餐品组合，不按价格或热量加权',
         'snapshot_id': fingerprint(snapshot),
     }
     result['draw_id'] = fingerprint(result)

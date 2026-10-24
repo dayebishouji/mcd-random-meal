@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from meal import amount_to_fen, draw, optimize, select_best, validate_draw
-from mcp_readonly import ALLOWED, MCP, pointer, tool_data
+from mcp_readonly import ALLOWED, MCP, ToolBusinessError, pointer, tool_data
 from report import render
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -22,9 +22,9 @@ def write(path, value):
     destination.write_text(json.dumps(value, ensure_ascii=False, indent=2), encoding='utf-8')
 
 
-def demo(no_main=False, seed=None):
+def demo(no_main=False, seed=None, count=3):
     snapshot = read(ROOT / 'examples' / 'demo.json')
-    meal = draw(snapshot, no_main=no_main, seed=seed)
+    meal = draw(snapshot, no_main=no_main, seed=seed, count=count)
     catalog = {'draw_id': meal['draw_id'], 'mode': 'demo', 'store': meal['store'],
                'context': meal['context'], 'offers': snapshot['offers'],
                'scope': '虚构单点、等价套餐与演示券；不对应官方优惠'}
@@ -65,12 +65,17 @@ def quote_requests(meal, plans, prepared, client, total_pointer, unit):
         try:
             result = client.call('calculate-price', arguments)
             payload = tool_data(result)
-        except ValueError as exc:
+            price = amount_to_fen(pointer(payload, total_pointer), unit)
+        except ToolBusinessError as exc:
+            quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
+                           'status': 'failed', 'reason': str(exc)})
+            continue
+        except (ValueError, KeyError, TypeError) as exc:
             quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
                            'status': 'failed', 'reason': str(exc)})
             break
         quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
-                       'status': 'success', 'payable_fen': amount_to_fen(pointer(payload, total_pointer), unit),
+                       'status': 'success', 'payable_fen': price,
                        'quoted_at': payload.get('datetime') or datetime.now(timezone.utc).isoformat(),
                        'source': '麦当劳 MCP calculate-price；' + total_pointer + '；单位 ' + unit})
     return quotes
@@ -81,21 +86,26 @@ def main():
     commands = parser.add_subparsers(dest='command', required=True)
     p = commands.add_parser('demo', help='运行明确标注的离线模拟')
     p.add_argument('--no-main', action='store_true')
+    p.add_argument('--count', type=int, choices=range(1, 7), default=3, help='推荐数量 1–6，默认 3')
     p.add_argument('--seed', type=int, help='仅供演示复现，正常使用留空')
     p.add_argument('--output', default=str(ROOT / 'local' / 'demo.json'))
     p.add_argument('--html', default=str(ROOT / 'local' / 'demo.html'))
     p = commands.add_parser('draw', help='从宿主用 MCP 整理的菜单中随机抽餐')
     p.add_argument('--input', required=True)
     p.add_argument('--no-main', action='store_true')
-    p.add_argument('--count', type=int, default=3)
+    p.add_argument('--count', type=int, choices=range(1, 7), default=3)
     p.add_argument('--output', required=True)
     p = commands.add_parser('live', help='按指定城市地标查询、随机选餐并进行官方核价')
     p.add_argument('--city', required=True)
     p.add_argument('--keyword', required=True)
     p.add_argument('--store-code', help='不填时选接口返回的首家营业门店')
     p.add_argument('--no-main', action='store_true')
+    p.add_argument('--count', type=int, choices=range(1, 7), default=3, help='推荐数量 1–6，默认 3')
     p.add_argument('--output', default=str(ROOT / 'local' / 'live.json'))
     p.add_argument('--html', default=str(ROOT / 'local' / 'live.html'))
+    p = commands.add_parser('doctor', help='检查安装、环境变量和只读 MCP 连接')
+    p.add_argument('--offline', action='store_true', help='仅检查安装和离线流程，不发网络请求')
+    p.add_argument('--output', default=str(ROOT / 'local' / 'doctor.json'))
     p = commands.add_parser('plan', help='枚举保持餐品、规格和份数不变的购买方案')
     p.add_argument('--draw', required=True)
     p.add_argument('--catalog', required=True)
@@ -121,7 +131,22 @@ def main():
     p.add_argument('--output', required=True)
     args = parser.parse_args()
     if args.command == 'demo':
-        result = demo(args.no_main, args.seed)
+        result = demo(args.no_main, args.seed, args.count)
+    elif args.command == 'doctor':
+        import os
+        token = os.environ.get('MCD_MCP_TOKEN', '').strip()
+        demo(count=1)
+        result = {'installation': 'passed', 'offline_demo': 'passed',
+                  'token_configured': bool(token and not token.startswith('${')), 'connection': 'not_checked'}
+        if not args.offline:
+            client = MCP()
+            client.connect()
+            names = {tool['name'] for tool in client.tools()}
+            required = {'query-nearby-stores', 'query-meals', 'query-meal-detail', 'list-nutrition-foods', 'query-store-coupons', 'calculate-price'}
+            missing = sorted(required - names)
+            if missing:
+                raise ValueError('MCP 缺少所需只读工具：' + '、'.join(missing))
+            result.update(connection='passed', required_tools='available', network_retries=client.retry_count)
     elif args.command == 'draw':
         result = draw(read(args.input), args.no_main, args.count)
     elif args.command == 'plan':
@@ -136,7 +161,7 @@ def main():
             result = client.tools()
         elif args.command == 'live':
             from live import live_recommend
-            result = live_recommend(client, args.city, args.keyword, args.store_code, args.no_main)
+            result = live_recommend(client, args.city, args.keyword, args.store_code, args.no_main, args.count)
         elif args.command == 'call':
             result = client.call(args.tool, read(args.arguments))
         else:

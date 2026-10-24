@@ -4,9 +4,11 @@ import csv
 import itertools
 import re
 from collections import Counter
+import math
 
 from meal import amount_to_fen, draw, fingerprint, optimize, select_best
-from mcp_readonly import tool_data
+from mcp_readonly import ToolBusinessError, tool_data
+from images import official_image
 
 
 def classify(name):
@@ -39,12 +41,25 @@ def menu_kind(code, entity, menu):
 
 
 def nutrition_map(text):
-    rows = list(csv.reader(text.splitlines()[1:], skipinitialspace=True))
+    lines = text.splitlines()
+    header = re.search(r'\{([^}]+)\}', lines[0] if lines else '')
+    if not header:
+        raise ValueError('官方营养字段缺失，无法确认每份 kcal')
+    fields = next(csv.reader([header.group(1)], skipinitialspace=True))
+    if 'productName' not in fields or 'energyKcal' not in fields:
+        raise ValueError('官方营养字段已变更，不能用 kJ 或猜测值替代 kcal')
+    name_index, energy_index = fields.index('productName'), fields.index('energyKcal')
+    rows = csv.reader(lines[1:], skipinitialspace=True)
     result = {}
     for row in rows:
-        if len(row) >= 4:
-            name = normalize_name(row[0])
-            value = float(row[3])
+        if len(row) > max(name_index, energy_index):
+            name = normalize_name(row[name_index])
+            try:
+                value = float(row[energy_index])
+                if not math.isfinite(value) or value < 0:
+                    value = None
+            except ValueError:
+                value = None
             if name in result and result[name] != value:
                 result[name] = None
             else:
@@ -101,6 +116,9 @@ def prepare_snapshot(menu, nutrition, store, details):
         except ValueError:
             skipped.append(name)
             continue
+        if len(components) != 1 or components[0]['quantity'] != 1:
+            skipped.append(name)
+            continue
         component_calories = [calories.get(normalize_name(c['name'])) for c in components]
         kcal = None if any(v is None for v in component_calories) else sum(v*c['quantity'] for v, c in zip(component_calories, components))
         display_name = ' + '.join(c['name'] + (f"×{c['quantity']}" if c['quantity'] != 1 else '') for c in components)
@@ -110,6 +128,9 @@ def prepare_snapshot(menu, nutrition, store, details):
                       'menu_fen': amount_to_fen(entity['currentPrice'], 'yuan'), 'kcal': kcal,
                       'components': components, 'request_item': request,
                       'evidence': '当前门店 query-meals + query-meal-detail 默认规格；热量按官方精确名称匹配'}
+        image = official_image(entity.get('image'))
+        if image:
+            item.update(image_url=image, image_source='麦当劳官方菜单；仅为餐品示意，实际规格以文字为准')
         physical_key = fingerprint(sorted((c['code'], c['quantity']) for c in components))
         if physical_key in physical_items:
             physical_items[physical_key].setdefault('alternates', []).append(item)
@@ -161,7 +182,9 @@ def bundle_offers(detail, meal):
     return offers
 
 
-def live_recommend(client, city, keyword, store_code=None, no_main=False):
+def live_recommend(client, city, keyword, store_code=None, no_main=False, count=3):
+    if type(count) is not int or not 1 <= count <= 6:
+        raise ValueError('每次推荐 1 至 6 样，默认 3 样')
     def call(name, arguments):
         return tool_data(client.call(name, arguments))
     stores = call('query-nearby-stores', {'city': city, 'keyword': keyword, 'beType': 1, 'searchType': 2})['data']
@@ -172,16 +195,29 @@ def live_recommend(client, city, keyword, store_code=None, no_main=False):
     context = {'storeCode': store['storeCode'], 'orderType': 1, 'beType': 1}
     menu = call('query-meals', context)
     nutrition = call('list-nutrition-foods', {})
-    coupons = call('query-store-coupons', context)
+    warnings = []
+    try:
+        coupons = call('query-store-coupons', context)
+        coupon_count = len(coupons['data'])
+    except ToolBusinessError:
+        coupons = {'data': []}
+        coupon_count = None
+        warnings.append('门店优惠券查询失败，本轮不比较券，不代表账号无券')
     details = {}
+    detail_failures = []
+    attempted = 0
     for code, entity in menu['data']['meals'].items():
         name = entity['name']
         if not entity.get('canWithOrder') and not re.search('套餐|件套|双人|分享餐|随心配|小食盘|开心乐园餐', name) and menu_kind(code, entity, menu) != 'unknown':
-            if len(details) >= 60:
+            if attempted >= 60:
                 break
-            details[code] = call('query-meal-detail', {**context, 'code': code})['data']
+            attempted += 1
+            try:
+                details[code] = call('query-meal-detail', {**context, 'code': code})['data']
+            except ToolBusinessError:
+                detail_failures.append(name)
     snapshot = prepare_snapshot(menu, nutrition, store, details)
-    meal = draw(snapshot, no_main=no_main)
+    meal = draw(snapshot, no_main=no_main, count=count)
     offers = [{'id': 'single:' + item['id'], 'label': item['name'] + '单点', 'covers': {item['id']: 1},
                'request_item': item['request_item'], 'evidence': item['evidence']} for item in meal['items']]
     for item in meal['items']:
@@ -207,14 +243,18 @@ def live_recommend(client, city, keyword, store_code=None, no_main=False):
     bundles.sort(key=lambda pair: (not any(n in pair[1]['name'] for n in chosen_names), '随心配' not in pair[1]['name'], pair[0]))
     checked = 0
     for code, entity in bundles[:12]:
-        detail = call('query-meal-detail', {**context, 'code': code})['data']
         checked += 1
+        try:
+            detail = call('query-meal-detail', {**context, 'code': code})['data']
+        except ToolBusinessError:
+            warnings.append('某套餐详情查询失败，本轮未比较该入口')
+            continue
         offers.extend(bundle_offers(detail, meal))
     offers_trimmed = len(offers) > 40
     if offers_trimmed:
         offers = offers[:40]
     catalog = {'draw_id': meal['draw_id'], 'mode': 'live', 'store': meal['store'], 'context': meal['context'],
-               'offers': offers, 'scope': f'单点、当前门店已有券与 {checked} 个套餐入口；不含付费开卡或新增领券'}
+               'offers': offers, 'scope': f'单点、{"当前门店已有券" if coupon_count is not None else "券未验证"}与 {checked} 个套餐入口；不含付费开卡或新增领券' + ('；' + '；'.join(dict.fromkeys(warnings)) if warnings else '')}
     plans = optimize(meal, catalog)
     plans['truncated'] = plans['truncated'] or offers_trimmed
     quotes = []
@@ -226,13 +266,19 @@ def live_recommend(client, city, keyword, store_code=None, no_main=False):
             quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
                            'status': 'success', 'payable_fen': price, 'quoted_at': response['datetime'],
                            'source': '麦当劳 MCP calculate-price /data/price，单位分'})
-        except ValueError as exc:
+        except ToolBusinessError as exc:
+            quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
+                           'status': 'failed', 'reason': str(exc)})
+            continue
+        except (ValueError, KeyError, TypeError) as exc:
             quotes.append({'draw_id': meal['draw_id'], 'mode': 'live', 'plan_id': plan['id'],
                            'status': 'failed', 'reason': str(exc)})
             break
     return {'meal': meal, 'comparison': select_best(meal, plans, quotes),
-            'verification': {'store_coupon_count': len(coupons['data']), 'menu_items': len(menu['data']['meals']),
+            'verification': {'store_coupon_count': coupon_count, 'menu_items': len(menu['data']['meals']),
                              'eligible_items': len(snapshot['items']), 'bundle_entries_checked': checked,
                              'successful_quotes': sum(q['status'] == 'success' for q in quotes),
                              'store_selection': '指定门店' if store_code else '接口返回的首家营业门店',
+                             'network_retries': getattr(client, 'retry_count', 0),
+                             'detail_failures': detail_failures, 'warnings': warnings,
                              'excluded': snapshot['skipped']}}

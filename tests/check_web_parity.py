@@ -20,7 +20,7 @@ def main():
     for case in cases:
         fixture = copy.deepcopy(data)
         fixture['items'] = [i for i in fixture['items'] if i['id'] in case['ids']]
-        meal = draw(fixture, all(i['kind'] != 'main' for i in fixture['items']), seed=1)
+        meal = draw(fixture, all(i['kind'] != 'main' for i in fixture['items']), count=len(fixture['items']), seed=1)
         plans = optimize(meal, {**meal, 'offers': data['offers']})['plans']
         prices = [sum(o['demo_fen'] for o in p['offers']) for p in plans]
         baseline = next(sum(o['demo_fen'] for o in p['offers']) for p in plans if all(o['id'].startswith('single:') for o in p['offers']))

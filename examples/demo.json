@@ -19,7 +19,10 @@
       "menu_fen": 2400,
       "kcal": 510,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260309/product/MS_1100_320.png",
+      "image_caption": "麦当劳官方示意 · 巨无霸",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "chicken-burger",
@@ -28,7 +31,10 @@
       "menu_fen": 2200,
       "kcal": 480,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260325/product/MS_1440_320.png",
+      "image_caption": "麦当劳官方示意 · 麦辣鸡腿汉堡",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "fish-burger",
@@ -37,7 +43,10 @@
       "menu_fen": 2100,
       "kcal": 330,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260101/product/MS_1600_320.png",
+      "image_caption": "麦当劳官方示意 · 麦香鱼",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "wrap",
@@ -55,7 +64,10 @@
       "menu_fen": 1400,
       "kcal": 290,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20250523/product/MS_G4810_320_1747877491921.png",
+      "image_caption": "麦当劳官方示意 · 薯条",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "nuggets",
@@ -64,7 +76,10 @@
       "menu_fen": 1500,
       "kcal": 210,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260529/product/MS_G1401_320.png",
+      "image_caption": "麦当劳官方示意 · 麦乐鸡",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "corn",
@@ -73,7 +88,10 @@
       "menu_fen": 1100,
       "kcal": 55,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G4437_320.png",
+      "image_caption": "麦当劳官方示意 · 玉米杯",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "wings",
@@ -82,7 +100,10 @@
       "menu_fen": 1600,
       "kcal": 220,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/20260325/product/MS_G1700_320.png",
+      "image_caption": "麦当劳官方示意 · 麦辣鸡翅",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "cola",
@@ -91,7 +112,10 @@
       "menu_fen": 1000,
       "kcal": 145,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_9900008751_320.gif",
+      "image_caption": "麦当劳官方示意 · 可乐",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "zero",
@@ -109,7 +133,10 @@
       "menu_fen": 900,
       "kcal": 2,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_3505_320.png",
+      "image_caption": "麦当劳官方示意 · 锡兰红茶",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "pie",
@@ -118,7 +145,10 @@
       "menu_fen": 800,
       "kcal": 225,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G9900008752_320.gif",
+      "image_caption": "麦当劳官方示意 · 派",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     },
     {
       "id": "icecream",
@@ -127,7 +157,10 @@
       "menu_fen": 500,
       "kcal": 95,
       "selectable": true,
-      "evidence": "为离线测试虚构的餐品、每份价格及热量"
+      "evidence": "为离线测试虚构的餐品、每份价格及热量",
+      "image_url": "https://menu-img.mcd.cn/pcm/prod/menu/ProductPool/product/MS_G515837_320.png",
+      "image_caption": "麦当劳官方示意 · 圆筒冰淇淋",
+      "image_source": "2026-10-24 query-meals 返回的官方同类餐品图；模拟规格以文字为准"
     }
   ],
   "offers": [

@@ -1,0 +1,140 @@
+{
+  "source": "麦当劳官方 MCP 只读真实联调；不代表当前价格",
+  "dining_policy": "单人餐；饮品和甜品各最多1份",
+  "cases": [
+    {
+      "city": "深圳市",
+      "keyword": "福田",
+      "count": 6,
+      "no_main": true,
+      "store": {
+        "id": "1420450",
+        "name": "麦当劳深圳福田高铁站餐厅",
+        "address": "福田地铁站时尚美食广场D区"
+      },
+      "items": [
+        {
+          "name": "脆薯饼",
+          "kind": "side",
+          "kcal": 146.0,
+          "has_official_image": true
+        },
+        {
+          "name": "可乐小杯",
+          "kind": "drink",
+          "kcal": 107.0,
+          "has_official_image": true
+        },
+        {
+          "name": "麦乐鸡5块",
+          "kind": "side",
+          "kcal": 213.0,
+          "has_official_image": true
+        },
+        {
+          "name": "灰焰圆筒",
+          "kind": "dessert",
+          "kcal": null,
+          "has_official_image": true
+        },
+        {
+          "name": "麦麦脆汁鸡-琵琶腿",
+          "kind": "side",
+          "kcal": 328.0,
+          "has_official_image": true
+        },
+        {
+          "name": "那么大鸡排（椒盐风味）",
+          "kind": "side",
+          "kcal": null,
+          "has_official_image": true
+        }
+      ],
+      "observed_at": "2026-10-24 14:00:10",
+      "payable_fen": 6550,
+      "quoted_at": "2026-10-24 14:00:28",
+      "coupon_count": 0,
+      "successful_quotes": 1,
+      "failed_quotes": 0,
+      "network_retries": 0,
+      "status": "passed"
+    },
+    {
+      "city": "广州市",
+      "keyword": "天河城",
+      "count": 1,
+      "no_main": false,
+      "store": {
+        "id": "1400011",
+        "name": "麦当劳广州今日广场餐厅",
+        "address": "体育西路77号首层及二层"
+      },
+      "items": [
+        {
+          "name": "龙焰鸡腿堡",
+          "kind": "main",
+          "kcal": null,
+          "has_official_image": true
+        }
+      ],
+      "observed_at": "2026-10-24 14:00:29",
+      "payable_fen": 1590,
+      "quoted_at": "2026-10-24 14:00:47",
+      "coupon_count": 0,
+      "successful_quotes": 1,
+      "failed_quotes": 0,
+      "network_retries": 0,
+      "status": "passed"
+    },
+    {
+      "city": "上海市",
+      "keyword": "徐家汇",
+      "count": 4,
+      "no_main": false,
+      "store": {
+        "id": "1450323",
+        "name": "麦当劳上海徐汇漕溪北路百脑汇餐厅",
+        "address": "漕溪北路339号"
+      },
+      "items": [
+        {
+          "name": "【美汁源】“黄金橙橙”",
+          "kind": "drink",
+          "kcal": 165.0,
+          "has_official_image": true
+        },
+        {
+          "name": "菠萝派",
+          "kind": "dessert",
+          "kcal": 221.0,
+          "has_official_image": true
+        },
+        {
+          "name": "月下相思扭扭薯",
+          "kind": "side",
+          "kcal": null,
+          "has_official_image": true
+        },
+        {
+          "name": "咸蛋黄鸡腿蛋月堡",
+          "kind": "main",
+          "kcal": null,
+          "has_official_image": true
+        }
+      ],
+      "observed_at": "2026-10-24 14:00:48",
+      "payable_fen": 3990,
+      "quoted_at": "2026-10-24 14:01:08",
+      "coupon_count": 0,
+      "successful_quotes": 2,
+      "failed_quotes": 0,
+      "network_retries": 0,
+      "status": "passed"
+    }
+  ],
+  "unverified": [
+    "早餐时段",
+    "晚间时段",
+    "真实非空优惠券及多券组合"
+  ]
+}

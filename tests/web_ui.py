@@ -190,9 +190,81 @@ def run(args):
         quota.close()
         checks.append('storage quota exceeded fallback')
 
+        page.goto(args.url)
+        page.emulate_media(reduced_motion='reduce')
+        for no_main in (False, True):
+            page.locator('#without-main' if no_main else '#with-main').click()
+            ready()
+            for quantity in range(1, 7):
+                page.locator('#quantity-select').select_option(str(quantity))
+                ready()
+                expect(page.locator('.food-card')).to_have_count(quantity)
+                assert len(set(ids())) == quantity
+                assert page.locator('.food-card[data-kind="drink"]').count() <= 1
+                assert page.locator('.food-card[data-kind="dessert"]').count() <= 1
+                if quantity == 6:
+                    assert page.locator('.food-card[data-kind="main"],.food-card[data-kind="side"]').count() >= 4
+                if no_main:
+                    expect(page.locator('.food-card[data-kind="main"]')).to_have_count(0)
+                    assert page.locator('.food-card:not([data-kind="drink"])').count() >= 1
+                else:
+                    assert page.locator('.food-card[data-kind="main"]').count() >= 1
+                if quantity in (1, 6):
+                    page.locator('#share-button').click()
+                    expect(page.locator('#share-status')).to_contain_text('已复制')
+                    link = page.evaluate('navigator.clipboard.readText()')
+                    expected_ids = ids()
+                    recipient = browser.new_context()
+                    recipient_page = recipient.new_page()
+                    recipient_page.goto(link)
+                    expect(recipient_page.locator('.food-card')).to_have_count(quantity)
+                    expect(recipient_page.locator('#quantity-select')).to_have_value(str(quantity))
+                    assert recipient_page.evaluate('JSON.parse(localStorage.getItem("mcd-random-meal:v1")).current.ids') == expected_ids
+                    recipient.close()
+        page.reload()
+        expect(page.locator('#quantity-select')).to_have_value('6')
+        expect(page.locator('.food-card')).to_have_count(6)
+        checks.append('all 1–6 quantities in both modes; 1/6-item shares and refresh')
+
+        for fragment in ('#meal=burger,cola,zero&noMain=0', '#meal=burger,pie,icecream&noMain=0'):
+            page.goto(args.url+fragment)
+            expect(page.locator('#action-status')).to_contain_text('链接无效')
+        page.evaluate('''localStorage.setItem('mcd-random-meal:v1',JSON.stringify({current:{ids:['fries','nuggets','corn','cola','zero','tea'],noMain:true},recent:[{ids:['burger','cola','zero'],noMain:false}]}))''')
+        page.goto(args.url)
+        expect(page.locator('#quantity-select')).to_have_value('6')
+        expect(page.locator('#without-main')).to_have_attribute('aria-pressed','true')
+        expect(page.locator('#action-status')).to_contain_text('旧餐单不符合')
+        assert page.locator('.food-card[data-kind="drink"]').count() <= 1
+        assert page.locator('.food-card[data-kind="dessert"]').count() <= 1
+        assert page.evaluate('JSON.parse(localStorage.getItem("mcd-random-meal:v1")).recent.every(entry=>MealDemo.validMeal(MEAL_DEMO_DATA,entry))')
+        checks.append('single-person caps reject old links and migrate invalid saved meals explicitly')
+
+        page.evaluate('MEAL_DEMO_DATA.items.forEach(i=>i.selectable=["nuggets","corn"].includes(i.id))')
+        page.locator('#quantity-select').select_option('5')
+        ready()
+        expect(page.locator('#action-status')).to_contain_text('可选餐品不足')
+        expect(page.locator('#quantity-select')).to_be_enabled()
+        page.locator('#quantity-select').select_option('2')
+        ready()
+        expect(page.locator('.food-card')).to_have_count(2)
+        checks.append('insufficient eligible food keeps strict caps and allows smaller quantity recovery')
+
+        missing_images = browser.new_context()
+        missing_images.route('https://menu-img.mcd.cn/**', lambda route: route.abort())
+        fallback = missing_images.new_page()
+        fallback.on('pageerror', lambda error: errors.append(str(error)))
+        fallback.goto(args.url)
+        fallback.locator('#example-button').click()
+        expect(fallback.locator('.image-credit').filter(has_text='图片暂缺')).to_have_count(3)
+        expect(fallback.locator('.food-placeholder:visible')).to_have_count(3)
+        expect(fallback.locator('#best-price')).to_have_text('¥29.00')
+        missing_images.close()
+        checks.append('official image failures keep usable placeholders and prices')
+
         # One batched visual pass, alongside responsive checks.
         page.goto(args.url)
-        page.locator('#example-button').click()
+        page.locator('#quantity-select').select_option('6')
+        ready()
         for width in (1440, 768, 390, 360, 320):
             page.set_viewport_size({'width': width, 'height': 1000})
             dimensions = page.evaluate('({viewport:innerWidth,content:document.documentElement.scrollWidth})')

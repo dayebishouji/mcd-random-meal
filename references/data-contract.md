@@ -38,6 +38,8 @@ python scripts/main.py compare --draw local/draw.json --plans local/plans.json -
 
 `kind` 支持 main / side / drink / dessert / unknown。未知分类不抽取，未知热量仍可抽取。`kcal` 是一份所选规格的能量，不是每100克；`menu_fen` 只能由明确单位的菜单价转换。真实适配器另附 `components` 与 `request_item`，分别保存实际组成编码和 schema 派生的核价商品参数。
 
+`draw --count` 支持1–6样；程序在饮品最多1份、甜品最多1份、符合主食偏好且至少一份食物的组合中等概率抽取，不通过重抽实现约束。可选 `image_url` 保存本次菜单返回的官方图片地址，`image_source` 保存来源；只显示受支持的官方HTTPS图片，不提供图片时使用占位。图片不能作为价格、热量或实际规格的证据。
+
 ## catalog.json
 
 从 `draw.json` 原样复制 `draw_id`、`mode`、`store`、`context`。每个购买选项保存如下字段：
@@ -72,7 +74,7 @@ python scripts/main.py compare --draw local/draw.json --plans local/plans.json -
 
 失败报价用 `status: failed` 和 `reason`，不填虚构金额。不要将菜品列表价、优惠券名义折扣或业务失败响应作为成功核价。
 
-当前接口业务结果可以在 `structuredContent` 中，也可能包在文本的 JSON 内。必须确认业务 `success:true`，再读取金额。HTTP401/429、业务/参数错误不自动重试；保留已有有效报价，说明未核价范围，不轮换参数探测。
+当前接口业务结果可以在 `structuredContent` 中，也可能包在文本的 JSON 内。必须确认业务 `success:true`，再读取金额。HTTP401/403/429及业务/参数错误不自动重试；超时、连接失败和HTTP500/502/503/504对同一只读请求最多重试2次。一个方案的业务拒绝会标记失败并继续其他固定方案，网络/协议故障停止后续核价。保留已有有效报价，说明未核价范围，不轮换参数探测。
 
 ## 官方来源
 

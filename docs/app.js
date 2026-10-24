@@ -7,15 +7,21 @@
     do { root.crypto.getRandomValues(buffer); } while (buffer[0] >= limit);
     return buffer[0] % max;
   }
-  function draw(data, noMain = false, choose = randomInt) {
+  function draw(data, noMain = false, choose = randomInt, quantity = 3) {
     if (data.mode !== 'demo') throw new Error('网页只接受明确标注的模拟数据');
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 6) throw new Error('每次推荐 1–6 样');
     const pool = data.items.filter(i => i.selectable && i.kind !== 'unknown' && (!noMain || i.kind !== 'main'));
     const baskets = [];
-    for (let a = 0; a < pool.length; a++) for (let b = a + 1; b < pool.length; b++) for (let c = b + 1; c < pool.length; c++) {
-      const basket = [pool[a], pool[b], pool[c]];
-      if (noMain ? basket.some(i => i.kind !== 'drink') : basket.some(i => i.kind === 'main')) baskets.push(basket);
+    function collect(start, basket) {
+      if (basket.length === quantity) {
+        const balanced = basket.filter(i => i.kind === 'drink').length <= 1 && basket.filter(i => i.kind === 'dessert').length <= 1;
+        if (balanced && (noMain ? basket.some(i => i.kind !== 'drink') : basket.some(i => i.kind === 'main'))) baskets.push(basket);
+        return;
+      }
+      for (let index = start; index <= pool.length - (quantity - basket.length); index++) collect(index + 1, [...basket, pool[index]]);
     }
-    if (!baskets.length) throw new Error('当前模拟餐品不足三样');
+    collect(0, []);
+    if (!baskets.length) throw new Error('当前模拟餐品不足以满足数量和主食规则');
     const selected = baskets[choose(baskets.length)].slice();
     for (let i = selected.length - 1; i > 0; i--) { const j = choose(i + 1); [selected[i], selected[j]] = [selected[j], selected[i]]; }
     return selected;
@@ -44,13 +50,22 @@
     return { plans, best: plans[0] || null, baseline: baseline ? baseline.amount : null, truncated };
   }
   function validMeal(data, value) {
-    if (!value || !Array.isArray(value.ids) || value.ids.length !== 3 || new Set(value.ids).size !== 3 || typeof value.noMain !== 'boolean') return false;
+    if (!value || !Array.isArray(value.ids) || value.ids.length < 1 || value.ids.length > 6 || new Set(value.ids).size !== value.ids.length || typeof value.noMain !== 'boolean') return false;
     const items = value.ids.map(id => data.items.find(i => i.id === id && i.selectable && i.kind !== 'unknown'));
     if (items.some(i => !i)) return false;
+    if (items.filter(i => i.kind === 'drink').length > 1 || items.filter(i => i.kind === 'dessert').length > 1) return false;
     if (value.example === true && (value.noMain || value.ids.join(',') !== 'burger,fries,cola')) return false;
     return value.noMain ? items.every(i => i.kind !== 'main') && items.some(i => i.kind !== 'drink') : items.some(i => i.kind === 'main');
   }
-  const api = { draw, compare, validMeal };
+  function officialImage(value) {
+    if (typeof value !== 'string' || value.length > 2048) return null;
+    try {
+      const url = new URL(value);
+      if (url.protocol === 'https:' && ['menu-img.mcd.cn', 'img.mcd.cn'].includes(url.hostname) && !url.username && !url.password && !url.port && !url.search && !url.hash) return url.href;
+    } catch (_) { /* Missing or unsupported URLs use the existing placeholder. */ }
+    return null;
+  }
+  const api = { draw, compare, validMeal, officialImage };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.MealDemo = api;
   if (typeof document === 'undefined') return;
@@ -63,7 +78,7 @@
   const icons = { burger: '🍔', 'chicken-burger': '🍔', 'fish-burger': '🍔', wrap: '🌯', fries: '🍟', nuggets: '🍗', corn: '🌽', wings: '🍗', cola: '🥤', zero: '🥤', tea: '☕', pie: '🥧', icecream: '🍦' };
   const colors = { main: '#ffd43b', side: '#e5bda0', drink: '#d9e8b5', dessert: '#edb8b2' };
   const storageKey = 'mcd-random-meal:v1';
-  let noMain = false, count = 0, selected = [], comparison, busy = false, currentExample = false, renderVersion = 0;
+  let noMain = false, quantity = 3, count = 0, selected = [], comparison, busy = false, currentExample = false, renderVersion = 0;
   let recent = [], storageAvailable = true, saved = {}, storedText = null;
   try { storedText = root.localStorage.getItem(storageKey); }
   catch (_) { storageAvailable = false; }
@@ -89,7 +104,7 @@
     $('without-main').classList.toggle('active', value);
   }
   function renderHistory() {
-    $('history-list').innerHTML = recent.length ? recent.map((entry, index) => `<button class="history-entry" data-history="${index}"${busy ? ' disabled' : ''}><span>${entry.ids.map(id => escape(data.items.find(i => i.id === id).name.replace(/^演示/, ''))).join(' ＋ ')}</span><small>${entry.example ? '固定模拟案例' : entry.noMain ? '不含主食' : '带主食'} · 恢复 ↗</small></button>`).join('') : '<p class="history-empty">还没有记录。再抽一组，就会留在这里。</p>';
+    $('history-list').innerHTML = recent.length ? recent.map((entry, index) => `<button class="history-entry" data-history="${index}"${busy ? ' disabled' : ''}><span>${entry.ids.map(id => escape(data.items.find(i => i.id === id).name.replace(/^演示/, ''))).join(' ＋ ')}</span><small>${entry.ids.length} 样 · ${entry.example ? '固定模拟案例' : entry.noMain ? '不含主食' : '带主食'} · 恢复 ↗</small></button>`).join('') : '<p class="history-empty">还没有记录。再抽一组，就会留在这里。</p>';
     $('clear-history').disabled = busy || recent.length === 0;
   }
   function updateReference() {
@@ -114,8 +129,22 @@
   }
   function show(items, source = 'random', remember = true) {
     selected = items; comparison = compare(data, items);
+    quantity = items.length;
+    $('quantity-select').value = String(quantity);
+    $('quantity-hint').textContent = `${quantity} 样 · 饮品、甜品各最多 1 份`;
+    $('food-cards').dataset.size = String(quantity);
     currentExample = source === 'example'; renderVersion++;
-    $('food-cards').innerHTML = items.map(i => `<article class="food-card" data-kind="${escape(i.kind)}"><div class="food-visual" style="--card-bg:${colors[i.kind]}"><small class="food-kind">${names[i.kind]}</small><span aria-hidden="true">${icons[i.id] || '🍽️'}</span></div><div class="food-info"><h3>${escape(i.name.replace(/^演示/, ''))}</h3><div class="food-stats"><b>${money(i.menu_fen)}</b><span>${i.kcal == null ? '热量未知' : `${i.kcal} <small>kcal</small>`}</span></div></div></article>`).join('');
+    $('food-cards').innerHTML = items.map(i => {
+      const image = officialImage(i.image_url);
+      return `<article class="food-card" data-kind="${escape(i.kind)}"><div class="food-visual" style="--card-bg:${colors[i.kind]}"><small class="food-kind">${names[i.kind]}</small><span class="food-placeholder" aria-hidden="true">${icons[i.id] || '🍽️'}</span>${image ? `<img class="product-photo" src="${escape(image)}" alt="${escape(i.image_caption || i.name)}" loading="lazy" referrerpolicy="no-referrer">` : ''}</div><div class="food-info"><h3>${escape(i.name.replace(/^演示/, ''))}</h3><div class="food-stats"><b>${money(i.menu_fen)}</b><span>${i.kcal == null ? '热量未知' : `${i.kcal} <small>kcal</small>`}</span></div>${image ? `<small class="image-credit">${escape(i.image_caption || '麦当劳官方菜单示意图')}</small>` : '<small class="image-credit">餐品示意占位图</small>'}</div></article>`;
+    }).join('');
+    document.querySelectorAll('.product-photo').forEach(image => {
+      const loaded = () => image.parentElement.classList.add('has-photo');
+      const failed = () => { image.parentElement.classList.remove('has-photo'); image.hidden = true; image.closest('.food-card').querySelector('.image-credit').textContent = '图片暂缺 · 使用示意占位图'; };
+      image.addEventListener('load', loaded, { once: true });
+      image.addEventListener('error', failed, { once: true });
+      if (image.complete) { if (image.naturalWidth) loaded(); else failed(); }
+    });
     $('draw-status').textContent = currentExample ? '固定模拟案例 · 不是随机结果' : source === 'random' ? `第 ${count} 次抽取 · ${noMain ? '不含主食' : '至少一份主食'}` : `${source === 'shared' ? '分享' : '恢复'}餐单 · 不是新抽取`;
     $('receipt-lines').innerHTML = items.map(i => `<div class="receipt-item"><span>${escape(i.name.replace(/^演示/, ''))} × 1</span><span>${money(i.menu_fen)}</span></div>`).join('');
     $('best-price').textContent = comparison.best ? money(comparison.best.amount) : '待计算';
@@ -145,19 +174,21 @@
     busy = value;
     document.querySelector('.workspace').setAttribute('aria-busy', String(value));
     document.querySelector('.demo-section').classList.toggle('is-drawing', value);
-    for (const id of ['draw-button', 'with-main', 'without-main', 'example-button', 'copy-button', 'share-button']) $(id).disabled = value || !selected.length;
+    for (const id of ['draw-button', 'with-main', 'without-main', 'quantity-select', 'example-button']) $(id).disabled = value;
+    for (const id of ['copy-button', 'share-button']) $(id).disabled = value || !selected.length;
     $('hero-draw').setAttribute('aria-disabled', String(value));
     $('draw-button').setAttribute('aria-label', value ? '正在抽取餐单' : '再抽一组');
     renderHistory();
   }
-  function redraw(nextMode = noMain) {
+  function redraw(nextMode = noMain, nextQuantity = quantity) {
     if (busy) return;
-    const previousMode = noMain;
+    const previousMode = noMain, previousQuantity = quantity;
+    quantity = nextQuantity;
     mode(nextMode); setBusy(true);
-    $('action-status').textContent = '骰子转一圈，正在揭晓三样餐品…';
+    $('action-status').textContent = `骰子转一圈，正在揭晓 ${quantity} 样餐品…`;
     root.setTimeout(() => {
-      try { const items = draw(data, noMain); count++; show(items); }
-      catch (_) { mode(previousMode); $('action-status').textContent = '这次没能抽取，当前可选餐品不足或随机源不可用。请刷新后再试。'; }
+      try { const items = draw(data, noMain, randomInt, quantity); count++; show(items); }
+      catch (_) { mode(previousMode); quantity = previousQuantity; $('quantity-select').value = String(quantity); $('action-status').textContent = '这次没能抽取，当前可选餐品不足或随机源不可用。请调整数量或刷新后再试。'; }
       finally { setBusy(false); loadShared(); }
     }, root.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 360);
   }
@@ -185,6 +216,7 @@
   $('hero-draw').addEventListener('click', event => { if (busy) event.preventDefault(); else { clearSharedHash(); redraw(); } });
   $('with-main').addEventListener('click', () => { clearSharedHash(); redraw(false); });
   $('without-main').addEventListener('click', () => { clearSharedHash(); redraw(true); });
+  $('quantity-select').addEventListener('change', () => { clearSharedHash(); redraw(noMain, Number($('quantity-select').value)); });
   $('example-button').addEventListener('click', () => {
     clearSharedHash(); mode(false);
     show(['burger', 'fries', 'cola'].map(id => data.items.find(i => i.id === id)), 'example');
@@ -230,7 +262,16 @@
   }
   storageNote();
   if (validMeal(data, saved.current)) restore(saved.current);
-  else { try { count++; show(draw(data, noMain)); } catch (_) { $('action-status').textContent = '暂时无法准备餐单，请刷新页面重试。'; setBusy(false); } }
+  else {
+    if (saved.current && Array.isArray(saved.current.ids) && saved.current.ids.length >= 1 && saved.current.ids.length <= 6 && typeof saved.current.noMain === 'boolean') {
+      quantity = saved.current.ids.length; mode(saved.current.noMain);
+      $('quantity-select').value = String(quantity);
+    }
+    try {
+      count++; show(draw(data, noMain, randomInt, quantity));
+      if (saved.current) $('action-status').textContent = '旧餐单不符合当前单人餐规则，已按原数量和主食偏好重新抽取。';
+    } catch (_) { $('action-status').textContent = '暂时无法准备餐单，请调整数量或刷新重试。'; setBusy(false); }
+  }
   loadShared();
   root.addEventListener('hashchange', () => { if (!busy) loadShared(); });
 })(typeof globalThis !== 'undefined' ? globalThis : this);
