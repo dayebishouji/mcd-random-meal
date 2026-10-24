@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffd43b">
+  <meta name="description" content="午饭不纠结，听天由麦。随机抽三样，看看价格、热量，再比较同一份餐单怎么买。无需安装的模拟演示。">
+  <meta property="og:title" content="听天由麦｜这一餐，随机决定。">
+  <meta property="og:description" content="随机开饭，认真算账。支持不要主食，展示价格、热量和同餐单优惠。免安装模拟演示。">
+  <meta property="og:image" content="https://ting-tian-you-mai-demo.silkypony128.chatgpt.site/assets/meal-hero.png">
+  <meta property="og:type" content="website">
+  <title>听天由麦｜这一餐，随机决定。</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffd43b'/%3E%3Crect x='11' y='11' width='42' height='42' rx='8' fill='%23e63c28'/%3E%3Cg fill='%23fff8df'%3E%3Ccircle cx='23' cy='23' r='4'/%3E%3Ccircle cx='41' cy='41' r='4'/%3E%3Ccircle cx='32' cy='32' r='4'/%3E%3C/g%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script src="demo-data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="topbar wrap">
+    <a class="brand" href="#" aria-label="听天由麦首页"><span class="brand-die" aria-hidden="true">⚄</span><span>听天由麦<small>RANDOM MEAL CLUB</small></span></a>
+    <nav aria-label="主导航"><a class="nav-proof" href="#proof">真实核价记录 ↗</a><a class="repo-link" href="https://github.com/dayebishouji/mcd-random-meal" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☆</span> GitHub / Star</a></nav>
+  </header>
+
+  <main>
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> 午饭选择困难，现在下班。</p>
+        <h1 id="hero-title">这一餐，<br>随机<span class="title-mark">决定。</span></h1>
+        <p class="hero-description">吃什么，交给手气。<br>多少钱、多少热量，交给算账。</p>
+        <div class="hero-actions"><a class="button button-ink" id="hero-draw" href="#try">随机开饭 <span aria-hidden="true">↙</span></a><span class="hero-note">不用登录 · 不用装软件<br>先玩一把模拟餐单</span></div>
+        <div class="hero-ticket"><span class="mini-die" aria-hidden="true">⚂</span> 默认带主食，也能说「不要主食」</div>
+      </div>
+      <div class="hero-art"><img src="assets/meal-hero.png" alt="原创复古快餐插画：汉堡、薯条、饮品、骰子和空白小票" width="1536" height="1024" fetchpriority="high"><span class="art-stamp">不纠结<br><b>开饭！</b></span><small>原创 AI 插画 · 餐品视觉示意</small></div>
+    </section>
+
+    <div class="ticker" aria-hidden="true"><div>先随机选餐 <span>✳</span> 再为同一餐单比较优惠 <span>✳</span> 热量明明白白 <span>✳</span> 不用再翻十分钟菜单 <span>✳</span> 先随机选餐 <span>✳</span> 再为同一餐单比较优惠</div></div>
+
+    <section class="demo-section" id="try" aria-labelledby="demo-title">
+      <div class="wrap">
+        <div class="section-heading"><div><p class="eyebrow">你的随机开饭台</p><h2 id="demo-title">今天，就吃这一组？</h2></div><span class="demo-badge">模拟体验 / 非实时菜单与价格</span></div>
+        <div class="controls"><div class="mode-group" role="group" aria-label="主食偏好"><button id="with-main" class="mode active" aria-pressed="true">默认带主食</button><button id="without-main" class="mode" aria-pressed="false">不要主食</button></div><button class="button button-red" id="draw-button"><span class="dice-icon" aria-hidden="true">⚄</span> 再抽一组 <span aria-hidden="true">↗</span></button></div>
+        <div class="workspace">
+          <div class="meal-area"><div class="meal-meta"><span id="draw-status">正在准备模拟餐单</span><span>每次抽 3 样 · 不按热量或价格加权</span></div><div id="food-cards" class="food-cards" aria-live="polite" aria-atomic="true"></div><div class="meal-actions"><button id="example-button" class="text-button">看看套餐省钱的模拟例子 →</button><button id="copy-button" class="text-button">复制这份餐单 <span aria-hidden="true">↗</span></button></div><p class="copy-status" id="copy-status" role="status"></p><p class="data-note">这里的餐品、门店、价格、热量和优惠均为虚构演示。真实推荐请安装 Skill，连接你自己的麦当劳 MCP。</p></div>
+          <aside class="receipt" aria-labelledby="receipt-title"><div class="receipt-heading"><span class="receipt-brand">听天由麦</span><span class="receipt-label">DEMO RECEIPT</span></div><h3 id="receipt-title">这单怎么买</h3><p class="receipt-caption">保持餐品和份数不变，比较购买方式。</p><div id="receipt-lines"></div><div class="receipt-total"><span>本轮模拟最低价</span><strong id="best-price">—</strong></div><div class="receipt-saving"><span>比模拟单点少花</span><b id="saving">—</b></div><div class="receipt-energy"><span>总热量</span><b id="total-kcal">—</b></div><p id="best-label" class="best-label"></p><details id="quote-details"><summary>展开全部模拟比价 <span id="quote-count"></span></summary><div id="quote-list"></div></details><div class="receipt-store"><b id="store-name"></b><span id="store-address"></span></div><div class="barcode" aria-hidden="true"></div><p class="receipt-foot">纯模拟 · 不下单 · 不用提供 Token</p></aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="proof" class="proof-section wrap" aria-labelledby="proof-title"><div class="proof-copy"><p class="eyebrow">模拟能试玩，真实也跑过</p><h2 id="proof-title">抽签随性。<br>核价认真。</h2><p>Skill 通过麦当劳官方 MCP 查询门店、菜单和每份营养；抽完后固定餐品，再向官方接口核算整单金额。</p><a class="text-link" href="https://github.com/dayebishouji/mcd-random-meal/blob/main/MCP_INTEGRATION.md" target="_blank" rel="noopener noreferrer">看完整接入与验证记录 ↗</a></div><div class="proof-ticket"><span class="history-label">真实联调 · 固定对照餐单</span><h3>麦香鸡 ＋ 小杯玉米杯 ＋ 锡兰红茶</h3><div class="price-comparison"><div><small>当次单点核价</small><span>¥40.00</span></div><span class="price-arrow" aria-hidden="true">→</span><div><small>等价随心配组合</small><b>¥24.40</b></div></div><p>同样三样、同样份数，节省 <strong>¥15.60</strong>。</p><p class="proof-disclaimer">2026-10-24 深圳福田测试门店的历史回执，非当前报价。这是固定验证案例，不冒充随机结果，不代表所有门店或账号的优惠。</p></div></section>
+
+    <section class="closing"><div class="wrap closing-inner"><div><p class="eyebrow">麦当劳程序员节参赛作品</p><h2>把选择困难，<br>留给下一件事。</h2><p>项目已开源。觉得有意思，欢迎给一个 Star，<br>也欢迎告诉我：你抽到了什么奇怪组合？</p></div><a class="button button-ink" href="https://github.com/dayebishouji/mcd-random-meal" target="_blank" rel="noopener noreferrer">去 GitHub 看项目 <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <footer class="footer wrap"><a class="brand footer-brand" href="#">听天由麦 <span aria-hidden="true">⚄</span></a><p>个人原创参赛项目，非麦当劳官方产品。<br>本页为模拟演示；真实餐品、价格和供应以官方渠道当次结果为准。</p><a href="https://github.com/dayebishouji/mcd-random-meal" target="_blank" rel="noopener noreferrer">源码与使用说明 ↗</a></footer>
+  <noscript><p class="noscript">随机演示需要启用 JavaScript。你仍可以前往 GitHub 查看源码和离线 Python 版本。</p></noscript>
+</body>
+</html>
