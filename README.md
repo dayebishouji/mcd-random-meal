@@ -6,6 +6,8 @@
 
 项目仓库：https://github.com/dayebishouji/mcd-random-meal
 
+参赛报名：[官方报名 Issue #1196](https://github.com/M-China/mcd-developer-innovation-challenge/issues/1196)，报名状态以该 Issue 下的官方回执为准。
+
 ## 使用示例
 
 - “深圳福田，随机推荐麦当劳，给我地址、价格和热量。”
