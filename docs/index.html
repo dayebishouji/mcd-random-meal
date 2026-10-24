@@ -12,8 +12,10 @@
   <title>听天由麦｜这一餐，随机决定。</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffd43b'/%3E%3Crect x='11' y='11' width='42' height='42' rx='8' fill='%23e63c28'/%3E%3Cg fill='%23fff8df'%3E%3Ccircle cx='23' cy='23' r='4'/%3E%3Ccircle cx='41' cy='41' r='4'/%3E%3Ccircle cx='32' cy='32' r='4'/%3E%3C/g%3E%3C/svg%3E">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="external.css">
   <script src="demo-data.js" defer></script>
   <script src="app.js" defer></script>
+  <script src="external.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#try">跳到随机开饭台</a>
@@ -45,6 +47,22 @@
           <div class="meal-area"><div class="meal-meta"><span id="draw-status">正在准备模拟餐单</span><span id="quantity-hint">3 样 · 主食、饮品、甜品各最多 1 份</span></div><div id="food-cards" class="food-cards" aria-live="polite" aria-atomic="true"></div><div class="meal-actions"><button id="example-button" class="text-button">看看套餐省钱的模拟例子 →</button><button id="copy-button" class="text-button">复制这份餐单 <span aria-hidden="true">↗</span></button></div><p class="copy-status" id="copy-status" role="status"></p><p class="data-note">门店、价格、热量和优惠均为虚构演示。部分图片按麦当劳官方菜单链接引用，用作同类餐品示意，实际规格以文字为准；图片权利归相关权利人。真实推荐请安装 Skill，连接你自己的麦当劳 MCP。</p></div>
           <aside class="receipt" aria-labelledby="receipt-title"><div class="receipt-heading"><span class="receipt-brand">听天由麦</span><span class="receipt-label">DEMO RECEIPT</span></div><h3 id="receipt-title">这单怎么买</h3><p class="receipt-caption">保持餐品和份数不变，比较购买方式。</p><div id="receipt-lines"></div><div class="receipt-total"><span>本轮模拟最低价</span><strong id="best-price">—</strong></div><div class="receipt-saving"><span>比模拟单点少花</span><b id="saving">—</b></div><div class="receipt-energy"><span>总热量</span><b id="total-kcal">—</b></div><p id="best-label" class="best-label"></p><details id="quote-details"><summary>展开全部模拟比价 <span id="quote-count"></span></summary><div id="quote-list"></div></details><div class="receipt-store"><b id="store-name"></b><span id="store-address"></span></div><div class="barcode" aria-hidden="true"></div><p class="receipt-foot">纯模拟 · 不下单 · 不用提供 Token</p></aside>
         </div>
+        <section class="price-lab" aria-labelledby="price-lab-title">
+          <div class="reprice-row"><div><p class="eyebrow">这组不换，再算一次</p><h3 id="price-lab-title">餐单留着，优惠再找找。</h3><p>同样的餐品、规格和份数，比套餐、随心配与可用券。</p></div><button class="utility-button" id="reprice-button">保留餐单，重新比价 ↻</button></div>
+          <details class="external-panel" id="external-panel"><summary>我有美团等平台券，算算参考总价 <span>手动填写 ↗</span></summary>
+            <form id="external-form">
+              <p id="external-hint" class="external-hint">13 元来自用户提供的随心配参考价，未经平台核实。请按券面勾选实际包含的同规格餐品；不能默认任意两样适用。网页余餐价格仍是虚构模拟。</p>
+              <div class="external-fields"><label for="external-platform">券的平台<select id="external-platform"><option>美团</option><option>抖音</option><option>其他平台</option></select></label><label for="external-price">购券价 / 元<input id="external-price" type="number" min="0" max="10000" step="0.01" value="13.00" required inputmode="decimal" aria-describedby="external-hint"></label><label for="external-extra">全部补差及费用 / 元<input id="external-extra" type="number" min="0" max="10000" step="0.01" value="0.00" required inputmode="decimal"></label></div>
+              <fieldset class="external-covers"><legend>这张券能覆盖餐单中的哪些餐品？</legend><div id="external-items"></div></fieldset>
+              <label class="external-notes" for="external-conditions">券面条件备注<input id="external-conditions" maxlength="300" placeholder="例如：适用门店、时段、规格、限购和补差条件"></label>
+              <label class="external-confirm"><input id="external-confirm" type="checkbox">我已自行核对门店、有效期、规格、限购和全部费用</label>
+              <button class="utility-button" type="submit">计算这张券的参考总价 →</button>
+              <p id="external-status" class="external-status" role="status" aria-live="polite">还没选覆盖餐品，暂不计算。</p>
+              <div id="external-result" class="external-result" hidden></div>
+              <p class="external-hint">参考合计＝购券价＋补差/费用＋余餐重新比价。外部券需独立购买和核销，此金额不是官方整单实付，不自动购券、领券或叠加多张外部券。</p>
+            </form>
+          </details>
+        </section>
         <div class="result-tools">
           <div class="share-row"><div><h3>这组有点意思？</h3><p>分享同一份餐单，朋友打开就能看到。</p></div><button class="utility-button" id="share-button">复制餐单链接 ↗</button></div>
           <p id="share-status" class="copy-status" role="status"></p>

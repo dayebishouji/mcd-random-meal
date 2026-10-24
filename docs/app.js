@@ -29,11 +29,21 @@
   function compare(data, selected) {
     const target = Object.fromEntries(selected.map(i => [i.id, 1]));
     const offers = data.offers.filter(o => Object.entries(o.covers).every(([id, count]) => count > 0 && count <= (target[id] || 0)));
+    offers.sort((a,b) => Object.values(b.covers).reduce((s,n)=>s+n,0)-Object.values(a.covers).reduce((s,n)=>s+n,0) || Number(a.id.startsWith('single:'))-Number(b.id.startsWith('single:')) || (a.id<b.id?-1:a.id>b.id?1:0));
     const plans = []; let truncated = false;
+    const planKeys = new Set();
+    function append(chosen) {
+      const key = chosen.map(o=>o.id).sort().join('|');
+      if (planKeys.has(key)) return;
+      if (plans.length >= 64) { truncated=true; return; }
+      planKeys.add(key);
+      plans.push({offers:chosen,amount:chosen.reduce((sum,o)=>sum+o.demo_fen,0),labels:chosen.map(o=>o.label)});
+    }
+    const baselineOffers = Object.entries(target).map(([id,n])=>offers.find(o=>o.id.startsWith('single:') && Object.keys(o.covers).length===1 && o.covers[id]===n));
+    if (baselineOffers.length && baselineOffers.every(Boolean)) append(baselineOffers);
     function search(start, remaining, chosen, groups) {
       if (Object.values(remaining).every(n => n === 0)) {
-        if (plans.length >= 24) { truncated = true; return; }
-        plans.push({ offers: chosen, amount: chosen.reduce((sum, o) => sum + o.demo_fen, 0), labels: chosen.map(o => o.label) });
+        append(chosen);
         return;
       }
       for (let index = start; index < offers.length && !truncated; index++) {
@@ -79,6 +89,7 @@
   const colors = { main: '#ffd43b', side: '#e5bda0', drink: '#d9e8b5', dessert: '#edb8b2' };
   const storageKey = 'mcd-random-meal:v1';
   let noMain = false, quantity = 3, count = 0, selected = [], comparison, busy = false, currentExample = false, renderVersion = 0;
+  api.current = () => ({ data, items: selected.slice() });
   let recent = [], storageAvailable = true, saved = {}, storedText = null;
   try { storedText = root.localStorage.getItem(storageKey); }
   catch (_) { storageAvailable = false; }
@@ -169,13 +180,14 @@
       recent = [entry, ...recent.filter(value => value.ids.slice().sort().join(',') !== key)].slice(0, 6);
     }
     renderHistory(); updateReference(); persist();
+    root.dispatchEvent(new CustomEvent('meal:shown', { detail: api.current() }));
   }
   function setBusy(value) {
     busy = value;
     document.querySelector('.workspace').setAttribute('aria-busy', String(value));
     document.querySelector('.demo-section').classList.toggle('is-drawing', value);
     for (const id of ['draw-button', 'with-main', 'without-main', 'quantity-select', 'example-button']) $(id).disabled = value;
-    for (const id of ['copy-button', 'share-button']) $(id).disabled = value || !selected.length;
+    for (const id of ['copy-button', 'share-button', 'reprice-button']) $(id).disabled = value || !selected.length;
     $('hero-draw').setAttribute('aria-disabled', String(value));
     $('draw-button').setAttribute('aria-label', value ? '正在抽取餐单' : '再抽一组');
     renderHistory();
@@ -213,6 +225,12 @@
     }
   }
   $('draw-button').addEventListener('click', () => { clearSharedHash(); redraw(); });
+  $('reprice-button').addEventListener('click', () => {
+    if (busy || !selected.length) return;
+    show(selected.slice(), currentExample ? 'example' : 'restored', false);
+    $('draw-status').textContent = '保留餐单 · 已重新比价';
+    $('action-status').textContent = '餐品和份数未变，已按当前模拟优惠重新比价。真实价格请在 Skill 中重新核价。';
+  });
   $('hero-draw').addEventListener('click', event => { if (busy) event.preventDefault(); else { clearSharedHash(); redraw(); } });
   $('with-main').addEventListener('click', () => { clearSharedHash(); redraw(false); });
   $('without-main').addEventListener('click', () => { clearSharedHash(); redraw(true); });
