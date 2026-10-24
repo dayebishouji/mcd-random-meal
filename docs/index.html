@@ -16,6 +16,7 @@
   <script src="app.js" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#try">跳到随机开饭台</a>
   <header class="topbar wrap">
     <a class="brand" href="#" aria-label="听天由麦首页"><span class="brand-die" aria-hidden="true">⚄</span><span>听天由麦<small>RANDOM MEAL CLUB</small></span></a>
     <nav aria-label="主导航"><a class="nav-proof" href="#proof">真实核价记录 ↗</a><a class="repo-link" href="https://github.com/dayebishouji/mcd-random-meal" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">☆</span> GitHub / Star</a></nav>
@@ -39,9 +40,17 @@
       <div class="wrap">
         <div class="section-heading"><div><p class="eyebrow">你的随机开饭台</p><h2 id="demo-title">今天，就吃这一组？</h2></div><span class="demo-badge">模拟体验 / 非实时菜单与价格</span></div>
         <div class="controls"><div class="mode-group" role="group" aria-label="主食偏好"><button id="with-main" class="mode active" aria-pressed="true">默认带主食</button><button id="without-main" class="mode" aria-pressed="false">不要主食</button></div><button class="button button-red" id="draw-button"><span class="dice-icon" aria-hidden="true">⚄</span> 再抽一组 <span aria-hidden="true">↗</span></button></div>
-        <div class="workspace">
+        <p id="action-status" class="action-status" role="status" aria-live="polite">准备好了，看看今天的手气。</p>
+        <div class="workspace" aria-busy="false">
           <div class="meal-area"><div class="meal-meta"><span id="draw-status">正在准备模拟餐单</span><span>每次抽 3 样 · 不按热量或价格加权</span></div><div id="food-cards" class="food-cards" aria-live="polite" aria-atomic="true"></div><div class="meal-actions"><button id="example-button" class="text-button">看看套餐省钱的模拟例子 →</button><button id="copy-button" class="text-button">复制这份餐单 <span aria-hidden="true">↗</span></button></div><p class="copy-status" id="copy-status" role="status"></p><p class="data-note">这里的餐品、门店、价格、热量和优惠均为虚构演示。真实推荐请安装 Skill，连接你自己的麦当劳 MCP。</p></div>
           <aside class="receipt" aria-labelledby="receipt-title"><div class="receipt-heading"><span class="receipt-brand">听天由麦</span><span class="receipt-label">DEMO RECEIPT</span></div><h3 id="receipt-title">这单怎么买</h3><p class="receipt-caption">保持餐品和份数不变，比较购买方式。</p><div id="receipt-lines"></div><div class="receipt-total"><span>本轮模拟最低价</span><strong id="best-price">—</strong></div><div class="receipt-saving"><span>比模拟单点少花</span><b id="saving">—</b></div><div class="receipt-energy"><span>总热量</span><b id="total-kcal">—</b></div><p id="best-label" class="best-label"></p><details id="quote-details"><summary>展开全部模拟比价 <span id="quote-count"></span></summary><div id="quote-list"></div></details><div class="receipt-store"><b id="store-name"></b><span id="store-address"></span></div><div class="barcode" aria-hidden="true"></div><p class="receipt-foot">纯模拟 · 不下单 · 不用提供 Token</p></aside>
+        </div>
+        <div class="result-tools">
+          <div class="share-row"><div><h3>这组有点意思？</h3><p>分享同一份餐单，朋友打开就能看到。</p></div><button class="utility-button" id="share-button">复制餐单链接 ↗</button></div>
+          <p id="share-status" class="copy-status" role="status"></p>
+          <textarea id="manual-copy" class="manual-copy" aria-label="可手动复制的餐单或链接" readonly hidden></textarea>
+          <div class="reference-panel"><div class="reference-intro"><h3>给自己一点参考</h3><p id="reference-hint">只提醒，不筛选，不改变随机概率。热量数值不是饮食建议。</p></div><div class="reference-fields"><label for="budget-input">这餐预算 / 元<input id="budget-input" type="number" min="0" max="10000" step="0.01" inputmode="decimal" placeholder="不限" aria-describedby="reference-hint budget-note"></label><label for="kcal-input">热量参考 / kcal<input id="kcal-input" type="number" min="0" max="10000" step="1" inputmode="numeric" placeholder="不限" aria-describedby="reference-hint budget-note"></label></div><p id="budget-note" class="budget-note" aria-live="polite">未设参考值，放轻松抽。</p></div>
+          <section class="history-section" aria-labelledby="history-title"><div class="history-heading"><h3 id="history-title">刚才那组，也留着</h3><button id="clear-history" class="text-button" disabled>清空记录</button></div><p id="storage-note" class="storage-note">最近 6 份餐单仅保存在此浏览器，点击即可恢复。</p><div id="history-list" class="history-list"></div></section>
         </div>
       </div>
     </section>
