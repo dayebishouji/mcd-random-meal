@@ -38,7 +38,7 @@ python scripts/main.py compare --draw local/draw.json --plans local/plans.json -
 
 `kind` 支持 main / side / drink / dessert / unknown。未知分类不抽取，未知热量仍可抽取。`kcal` 是一份所选规格的能量，不是每100克；`menu_fen` 只能由明确单位的菜单价转换。真实适配器另附 `components` 与 `request_item`，分别保存实际组成编码和 schema 派生的核价商品参数。
 
-`draw --count` 支持1–6样；程序在饮品最多1份、甜品最多1份、符合主食偏好且至少一份食物的组合中等概率抽取，不通过重抽实现约束。可选 `image_url` 保存本次菜单返回的官方图片地址，`image_source` 保存来源；只显示受支持的官方HTTPS图片，不提供图片时使用占位。图片不能作为价格、热量或实际规格的证据。
+`draw --count` 支持1–6样；程序在主食最多1份（默认1份，不要主食为0份）、饮品最多1份、甜品最多1份、其余为小食且至少一份食物的组合中等概率抽取，不通过重抽实现约束。可选 `image_url` 保存本次菜单返回的官方图片地址，`image_source` 保存来源；只显示受支持的官方HTTPS图片，不提供图片时使用占位。图片不能作为价格、热量或实际规格的证据。
 
 ## catalog.json
 

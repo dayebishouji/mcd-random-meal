@@ -55,13 +55,14 @@ class FixtureMCP:
 
 
 class LiveWorkflowTests(unittest.TestCase):
-    def test_drink_and_dessert_caps_across_quantities_and_modes(self):
+    def test_main_drink_and_dessert_caps_across_quantities_and_modes(self):
         fixture = json.loads((ROOT/'examples/demo.json').read_text(encoding='utf-8'))
         for quantity in range(1,7):
             for no_main in (False,True):
                 for seed in range(100):
                     meal = draw(fixture,no_main,count=quantity,seed=seed)
                     kinds = Counter(i['kind'] for i in meal['items'])
+                    self.assertEqual(kinds['main'],int(not no_main))
                     self.assertLessEqual(kinds['drink'],1)
                     self.assertLessEqual(kinds['dessert'],1)
                     self.assertEqual(len(meal['items']),quantity)
@@ -73,7 +74,7 @@ class LiveWorkflowTests(unittest.TestCase):
         expected = Counter()
         for basket in itertools.combinations(pool,3):
             kinds = Counter(i['kind'] for i in basket)
-            if kinds['main'] and kinds['drink'] <= 1 and kinds['dessert'] <= 1:
+            if kinds['main'] == 1 and kinds['drink'] <= 1 and kinds['dessert'] <= 1:
                 expected[tuple(kinds[k] for k in ('main','side','drink','dessert'))] += 1
         class TicketRNG:
             def __init__(self,ticket): self.ticket=ticket
@@ -97,6 +98,12 @@ class LiveWorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'单人餐规则'):
             draw(fixture,count=4)
 
+    def test_extra_mains_cannot_replace_missing_sides(self):
+        fixture = json.loads((ROOT/'examples/demo.json').read_text(encoding='utf-8'))
+        fixture['items'] = [i for i in fixture['items'] if i['kind']=='main']
+        with self.assertRaisesRegex(ValueError,'单人餐规则'):
+            draw(fixture,count=2)
+
     def test_all_quantities_and_modes_keep_exact_baskets(self):
         for count in range(1,7):
             for no_main in (False,True):
@@ -105,7 +112,7 @@ class LiveWorkflowTests(unittest.TestCase):
                 items = result['meal']['items']
                 self.assertEqual(len(items),count)
                 self.assertEqual(len({i['id'] for i in items}),count)
-                self.assertEqual(any(i['kind']=='main' for i in items),not no_main)
+                self.assertEqual(sum(i['kind']=='main' for i in items),int(not no_main))
                 self.assertTrue(any(i['kind']!='drink' for i in items))
                 for name, request in client.calls:
                     if name == 'calculate-price':

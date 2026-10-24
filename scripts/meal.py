@@ -54,20 +54,20 @@ def validate_snapshot(snapshot):
 
 
 def single_person_sample(pool, count, no_main, rng):
-    """Uniform subsets under main preference and at most one drink/dessert each."""
+    """Uniform subsets with zero/one main and at most one drink/dessert each."""
     groups = [[i for i in pool if i['kind'] == kind] for kind in ('main', 'side', 'drink', 'dessert')]
     weights = []
-    for mains in range(0 if no_main else 1, min(count, len(groups[0])) + 1):
-        for drinks in range(min(1, count, len(groups[2])) + 1):
-            for desserts in range(min(1, count, len(groups[3])) + 1):
-                sides = count - mains - drinks - desserts
-                if not 0 <= sides <= len(groups[1]) or (no_main and mains) or mains + sides + desserts < 1:
-                    continue
-                sizes = (mains, sides, drinks, desserts)
-                weight = math.prod(math.comb(len(group), size) for group, size in zip(groups, sizes))
-                weights.append((sizes, weight))
+    mains = 0 if no_main else 1
+    for drinks in range(min(1, count, len(groups[2])) + 1):
+        for desserts in range(min(1, count, len(groups[3])) + 1):
+            sides = count - mains - drinks - desserts
+            if mains > len(groups[0]) or not 0 <= sides <= len(groups[1]) or mains + sides + desserts < 1:
+                continue
+            sizes = (mains, sides, drinks, desserts)
+            weight = math.prod(math.comb(len(group), size) for group, size in zip(groups, sizes))
+            weights.append((sizes, weight))
     if not weights:
-        raise ValueError('当前餐品不足以满足单人餐规则：饮品和甜品各最多1份；请减少数量或更换门店')
+        raise ValueError('当前餐品不足以满足单人餐规则：主食、饮品和甜品各最多1份，其余为小食；请减少数量或更换门店')
     ticket = rng.randrange(sum(weight for _, weight in weights))
     for sizes, weight in weights:
         if ticket < weight:
@@ -97,7 +97,7 @@ def draw(snapshot, no_main=False, count=3, seed=None):
         'nutrition': {'known_kcal': round(sum(item.get('kcal') or 0 for item in selected), 2),
                       'complete': not missing, 'missing': missing},
         'menu_total_fen': sum(item['menu_fen'] for item in selected) if menu_known else None,
-        'random_policy': '单人餐：饮品与甜品各最多1份、至少一份食物；等概率抽取符合条件的不同餐品组合，不按价格或热量加权',
+        'random_policy': '单人餐：主食、饮品与甜品各最多1份，其余为小食；默认1份主食，不要主食则0份，至少一份食物；等概率抽取符合条件的组合，不按价格或热量加权',
         'snapshot_id': fingerprint(snapshot),
     }
     result['draw_id'] = fingerprint(result)

@@ -25,7 +25,7 @@ class MealTests(unittest.TestCase):
                 meal = draw(self.snapshot, no_main, seed=seed)
                 kinds = [i['kind'] for i in meal['items']]
                 self.assertEqual(len(set(i['id'] for i in meal['items'])), 3)
-                self.assertEqual('main' in kinds, not no_main)
+                self.assertEqual(kinds.count('main'), int(not no_main))
                 self.assertTrue(any(k != 'drink' for k in kinds))
 
     def test_random_choice_does_not_depend_on_price_or_calories(self):
@@ -34,9 +34,9 @@ class MealTests(unittest.TestCase):
             item['menu_fen'], item['kcal'] = random.randrange(99999), None
         self.assertEqual(draw(self.snapshot, seed=24)['basket'], draw(changed, seed=24)['basket'])
 
-    def test_not_forced_to_one_main_or_a_drink(self):
+    def test_exactly_one_main_and_optional_drink(self):
         baskets = [draw(self.snapshot, seed=seed)['items'] for seed in range(100)]
-        self.assertTrue(any(sum(i['kind'] == 'main' for i in b) > 1 for b in baskets))
+        self.assertTrue(all(sum(i['kind'] == 'main' for i in b) == 1 for b in baskets))
         self.assertTrue(any(all(i['kind'] != 'drink' for i in b) for b in baskets))
 
     def test_missing_nutrition_is_not_complete_zero(self):

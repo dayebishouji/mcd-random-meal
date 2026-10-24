@@ -208,7 +208,7 @@ def run(args):
                     expect(page.locator('.food-card[data-kind="main"]')).to_have_count(0)
                     assert page.locator('.food-card:not([data-kind="drink"])').count() >= 1
                 else:
-                    assert page.locator('.food-card[data-kind="main"]').count() >= 1
+                    assert page.locator('.food-card[data-kind="main"]').count() == 1
                 if quantity in (1, 6):
                     page.locator('#share-button').click()
                     expect(page.locator('#share-status')).to_contain_text('已复制')
@@ -226,9 +226,16 @@ def run(args):
         expect(page.locator('.food-card')).to_have_count(6)
         checks.append('all 1–6 quantities in both modes; 1/6-item shares and refresh')
 
-        for fragment in ('#meal=burger,cola,zero&noMain=0', '#meal=burger,pie,icecream&noMain=0'):
+        for fragment in ('#meal=burger,cola,zero&noMain=0', '#meal=burger,pie,icecream&noMain=0', '#meal=burger,chicken-burger,fries&noMain=0'):
             page.goto(args.url+fragment)
             expect(page.locator('#action-status')).to_contain_text('链接无效')
+        page.evaluate('''localStorage.setItem('mcd-random-meal:v1',JSON.stringify({current:{ids:['burger','fish-burger','fries','corn'],noMain:false},recent:[{ids:['burger','fish-burger','fries'],noMain:false}]}))''')
+        page.goto(args.url)
+        expect(page.locator('#quantity-select')).to_have_value('4')
+        expect(page.locator('#action-status')).to_contain_text('旧餐单不符合')
+        expect(page.locator('.food-card[data-kind="main"]')).to_have_count(1)
+        assert page.evaluate('JSON.parse(localStorage.getItem("mcd-random-meal:v1")).recent.every(entry=>MealDemo.validMeal(MEAL_DEMO_DATA,entry))')
+        checks.append('multiple-main links and saved meals are rejected under the new rule')
         page.evaluate('''localStorage.setItem('mcd-random-meal:v1',JSON.stringify({current:{ids:['fries','nuggets','corn','cola','zero','tea'],noMain:true},recent:[{ids:['burger','cola','zero'],noMain:false}]}))''')
         page.goto(args.url)
         expect(page.locator('#quantity-select')).to_have_value('6')
@@ -263,6 +270,8 @@ def run(args):
 
         # One batched visual pass, alongside responsive checks.
         page.goto(args.url)
+        page.locator('#with-main').click()
+        ready()
         page.locator('#quantity-select').select_option('6')
         ready()
         for width in (1440, 768, 390, 360, 320):

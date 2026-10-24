@@ -14,7 +14,7 @@
     const baskets = [];
     function collect(start, basket) {
       if (basket.length === quantity) {
-        const balanced = basket.filter(i => i.kind === 'drink').length <= 1 && basket.filter(i => i.kind === 'dessert').length <= 1;
+        const balanced = basket.filter(i => i.kind === 'main').length <= 1 && basket.filter(i => i.kind === 'drink').length <= 1 && basket.filter(i => i.kind === 'dessert').length <= 1;
         if (balanced && (noMain ? basket.some(i => i.kind !== 'drink') : basket.some(i => i.kind === 'main'))) baskets.push(basket);
         return;
       }
@@ -53,7 +53,7 @@
     if (!value || !Array.isArray(value.ids) || value.ids.length < 1 || value.ids.length > 6 || new Set(value.ids).size !== value.ids.length || typeof value.noMain !== 'boolean') return false;
     const items = value.ids.map(id => data.items.find(i => i.id === id && i.selectable && i.kind !== 'unknown'));
     if (items.some(i => !i)) return false;
-    if (items.filter(i => i.kind === 'drink').length > 1 || items.filter(i => i.kind === 'dessert').length > 1) return false;
+    if (items.filter(i => i.kind === 'main').length > 1 || items.filter(i => i.kind === 'drink').length > 1 || items.filter(i => i.kind === 'dessert').length > 1) return false;
     if (value.example === true && (value.noMain || value.ids.join(',') !== 'burger,fries,cola')) return false;
     return value.noMain ? items.every(i => i.kind !== 'main') && items.some(i => i.kind !== 'drink') : items.some(i => i.kind === 'main');
   }
@@ -131,7 +131,7 @@
     selected = items; comparison = compare(data, items);
     quantity = items.length;
     $('quantity-select').value = String(quantity);
-    $('quantity-hint').textContent = `${quantity} 样 · 饮品、甜品各最多 1 份`;
+    $('quantity-hint').textContent = `${quantity} 样 · 主食、饮品、甜品各最多 1 份`;
     $('food-cards').dataset.size = String(quantity);
     currentExample = source === 'example'; renderVersion++;
     $('food-cards').innerHTML = items.map(i => {
@@ -145,7 +145,7 @@
       image.addEventListener('error', failed, { once: true });
       if (image.complete) { if (image.naturalWidth) loaded(); else failed(); }
     });
-    $('draw-status').textContent = currentExample ? '固定模拟案例 · 不是随机结果' : source === 'random' ? `第 ${count} 次抽取 · ${noMain ? '不含主食' : '至少一份主食'}` : `${source === 'shared' ? '分享' : '恢复'}餐单 · 不是新抽取`;
+    $('draw-status').textContent = currentExample ? '固定模拟案例 · 不是随机结果' : source === 'random' ? `第 ${count} 次抽取 · ${noMain ? '不含主食' : '一份主食'}` : `${source === 'shared' ? '分享' : '恢复'}餐单 · 不是新抽取`;
     $('receipt-lines').innerHTML = items.map(i => `<div class="receipt-item"><span>${escape(i.name.replace(/^演示/, ''))} × 1</span><span>${money(i.menu_fen)}</span></div>`).join('');
     $('best-price').textContent = comparison.best ? money(comparison.best.amount) : '待计算';
     $('saving').textContent = comparison.best && comparison.baseline != null ? money(comparison.baseline - comparison.best.amount) : '无对照';
