@@ -1,28 +1,41 @@
 (function (root) {
   'use strict';
   function randomInt(max) {
-    const range = 0x100000000;
+    const range = 0x20000000000000;
     const limit = Math.floor(range / max) * max;
-    const buffer = new Uint32Array(1);
-    do { root.crypto.getRandomValues(buffer); } while (buffer[0] >= limit);
-    return buffer[0] % max;
+    const buffer = new Uint32Array(2);
+    let value;
+    do { root.crypto.getRandomValues(buffer); value = (buffer[0] & 0x1fffff) * 0x100000000 + buffer[1]; } while (value >= limit);
+    return value % max;
   }
   function draw(data, noMain = false, choose = randomInt, quantity = 3) {
     if (data.mode !== 'demo') throw new Error('网页只接受明确标注的模拟数据');
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > 6) throw new Error('每次推荐 1–6 样');
     const pool = data.items.filter(i => i.selectable && i.kind !== 'unknown' && (!noMain || i.kind !== 'main'));
-    const baskets = [];
-    function collect(start, basket) {
-      if (basket.length === quantity) {
-        const balanced = basket.filter(i => i.kind === 'main').length <= 1 && basket.filter(i => i.kind === 'drink').length <= 1 && basket.filter(i => i.kind === 'dessert').length <= 1;
-        if (balanced && (noMain ? basket.some(i => i.kind !== 'drink') : basket.some(i => i.kind === 'main'))) baskets.push(basket);
-        return;
-      }
-      for (let index = start; index <= pool.length - (quantity - basket.length); index++) collect(index + 1, [...basket, pool[index]]);
+    const groups = ['main','side','drink','dessert'].map(kind => pool.filter(i => i.kind === kind));
+    function combinations(n,k) {
+      if (k < 0 || k > n) return 0;
+      let value=1;
+      for(let i=1;i<=k;i++) value=value*(n-i+1)/i;
+      return Math.round(value);
     }
-    collect(0, []);
-    if (!baskets.length) throw new Error('当前模拟餐品不足以满足数量和主食规则');
-    const selected = baskets[choose(baskets.length)].slice();
+    const weights=[], mains=noMain?0:1;
+    for(let drinks=0;drinks<=Math.min(1,quantity,groups[2].length);drinks++) {
+      for(let desserts=0;desserts<=Math.min(1,quantity,groups[3].length);desserts++) {
+        const sides=quantity-mains-drinks-desserts, sizes=[mains,sides,drinks,desserts];
+        if(sides<0 || sides>groups[1].length || mains>groups[0].length || mains+sides+desserts<1) continue;
+        const weight=sizes.reduce((value,size,index)=>value*combinations(groups[index].length,size),1);
+        weights.push({sizes,weight});
+      }
+    }
+    if (!weights.length) throw new Error('当前模拟餐品不足以满足数量和主食规则');
+    let ticket=choose(weights.reduce((sum,row)=>sum+row.weight,0)), sizes;
+    for(const row of weights) { if(ticket<row.weight) {sizes=row.sizes;break;} ticket-=row.weight; }
+    const selected=[];
+    groups.forEach((group,index)=>{
+      const available=group.slice();
+      for(let n=0;n<sizes[index];n++) selected.push(available.splice(choose(available.length),1)[0]);
+    });
     for (let i = selected.length - 1; i > 0; i--) { const j = choose(i + 1); [selected[i], selected[j]] = [selected[j], selected[i]]; }
     return selected;
   }
@@ -59,6 +72,18 @@
     const baseline = plans.find(p => p.offers.every(o => o.id.startsWith('single:')));
     return { plans, best: plans[0] || null, baseline: baseline ? baseline.amount : null, truncated };
   }
+  function drawBundle(data,noMain=false,choose=randomInt,quantity=3) {
+    const baskets=new Map();
+    for(const offer of data.offers) {
+      const ids=Object.keys(offer.covers);
+      if(!offer.id.startsWith('bundle:') || ids.length!==quantity || !Object.values(offer.covers).every(n=>n===1) || !validMeal(data,{ids,noMain})) continue;
+      baskets.set(ids.slice().sort().join(','),ids.map(id=>data.items.find(i=>i.id===id)));
+    }
+    if(!baskets.size) throw new Error('当前演示没有符合数量和主食偏好的套餐，请选择2–3样，或使用普通随机。');
+    const result=Array.from(baskets.values())[choose(baskets.size)].slice();
+    for(let i=result.length-1;i>0;i--){const j=choose(i+1);[result[i],result[j]]=[result[j],result[i]];}
+    return result;
+  }
   function validMeal(data, value) {
     if (!value || !Array.isArray(value.ids) || value.ids.length < 1 || value.ids.length > 6 || new Set(value.ids).size !== value.ids.length || typeof value.noMain !== 'boolean') return false;
     const items = value.ids.map(id => data.items.find(i => i.id === id && i.selectable && i.kind !== 'unknown'));
@@ -75,7 +100,7 @@
     } catch (_) { /* Missing or unsupported URLs use the existing placeholder. */ }
     return null;
   }
-  const api = { draw, compare, validMeal, officialImage };
+  const api = { draw, drawBundle, compare, validMeal, officialImage };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.MealDemo = api;
   if (typeof document === 'undefined') return;
@@ -84,6 +109,9 @@
   const $ = id => document.getElementById(id);
   const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
   const money = fen => `¥${(fen / 100).toFixed(2)}`;
+  $('catalog-note').textContent = `可抽 ${data.items.filter(i=>i.selectable).length} 样 · ${data.offers.filter(o=>o.id.startsWith('bundle:')).length} 个套餐参考买法。套餐模式也按所选数量和主食偏好抽取。`;
+  $('catalog-list').textContent = ['main','side','drink','dessert'].map(kind=>({main:'主食',side:'小食',drink:'饮品',dessert:'甜品'}[kind]+ '：'+data.items.filter(i=>i.selectable&&i.kind===kind).map(i=>i.name.replace(/^演示/,'')).join('、'))).join('\n\n');
+  $('bundle-reference-list').innerHTML = (data.bundle_reference?.quotes || []).map(q=>`<div class="quote-row"><span>${escape(q.name)}<small>${escape(q.items.map(i=>i.name).join(' ＋ '))}<br>${escape(q.quoted_at)} · ${escape(data.bundle_reference.store.name)}</small></span><b>${money(q.bundle_price_fen)}</b></div>`).join('');
   const names = { main: '主食', side: '小食', drink: '饮品', dessert: '甜品' };
   const icons = { burger: '🍔', 'chicken-burger': '🍔', 'fish-burger': '🍔', wrap: '🌯', fries: '🍟', nuggets: '🍗', corn: '🌽', wings: '🍗', cola: '🥤', zero: '🥤', tea: '☕', pie: '🥧', icecream: '🍦' };
   const colors = { main: '#ffd43b', side: '#e5bda0', drink: '#d9e8b5', dessert: '#edb8b2' };
@@ -156,7 +184,7 @@
       image.addEventListener('error', failed, { once: true });
       if (image.complete) { if (image.naturalWidth) loaded(); else failed(); }
     });
-    $('draw-status').textContent = currentExample ? '固定模拟案例 · 不是随机结果' : source === 'random' ? `第 ${count} 次抽取 · ${noMain ? '不含主食' : '一份主食'}` : `${source === 'shared' ? '分享' : '恢复'}餐单 · 不是新抽取`;
+    $('draw-status').textContent = currentExample ? '固定模拟案例 · 不是随机结果' : ['random','bundle'].includes(source) ? `第 ${count} 次${source==='bundle'?'套餐推荐':'抽取'} · ${noMain ? '不含主食' : '一份主食'}` : `${source === 'shared' ? '分享' : '恢复'}餐单 · 不是新抽取`;
     $('receipt-lines').innerHTML = items.map(i => `<div class="receipt-item"><span>${escape(i.name.replace(/^演示/, ''))} × 1</span><span>${money(i.menu_fen)}</span></div>`).join('');
     $('best-price').textContent = comparison.best ? money(comparison.best.amount) : '待计算';
     $('saving').textContent = comparison.best && comparison.baseline != null ? money(comparison.baseline - comparison.best.amount) : '无对照';
@@ -171,7 +199,7 @@
     $('copy-status').textContent = '';
     $('share-status').textContent = '';
     $('manual-copy').hidden = true;
-    $('action-status').textContent = source === 'random' ? '开饭签已揭晓。看看手气，再看看账单。' : currentExample ? '已展示固定模拟案例，可展开小票比较买法。' : '已恢复同一份模拟餐单，价格按当前演示数据重算。';
+    $('action-status').textContent = source === 'bundle' ? '已按数量和主食偏好随机选出套餐餐单，再比较同样餐品的模拟买法。' : source === 'random' ? '开饭签已揭晓。看看手气，再看看账单。' : currentExample ? '已展示固定模拟案例，可展开小票比较买法。' : '已恢复同一份模拟餐单，价格按当前演示数据重算。';
     document.querySelector('.workspace').classList.remove('dealing');
     void document.querySelector('.workspace').offsetWidth;
     document.querySelector('.workspace').classList.add('dealing');
@@ -186,21 +214,21 @@
     busy = value;
     document.querySelector('.workspace').setAttribute('aria-busy', String(value));
     document.querySelector('.demo-section').classList.toggle('is-drawing', value);
-    for (const id of ['draw-button', 'with-main', 'without-main', 'quantity-select', 'example-button']) $(id).disabled = value;
+    for (const id of ['draw-button', 'bundle-button', 'with-main', 'without-main', 'quantity-select', 'example-button']) $(id).disabled = value;
     for (const id of ['copy-button', 'share-button', 'reprice-button']) $(id).disabled = value || !selected.length;
     $('hero-draw').setAttribute('aria-disabled', String(value));
     $('draw-button').setAttribute('aria-label', value ? '正在抽取餐单' : '再抽一组');
     renderHistory();
   }
-  function redraw(nextMode = noMain, nextQuantity = quantity) {
+  function redraw(nextMode = noMain, nextQuantity = quantity, bundleOnly = false) {
     if (busy) return;
     const previousMode = noMain, previousQuantity = quantity;
     quantity = nextQuantity;
     mode(nextMode); setBusy(true);
     $('action-status').textContent = `骰子转一圈，正在揭晓 ${quantity} 样餐品…`;
     root.setTimeout(() => {
-      try { const items = draw(data, noMain, randomInt, quantity); count++; show(items); }
-      catch (_) { mode(previousMode); quantity = previousQuantity; $('quantity-select').value = String(quantity); $('action-status').textContent = '这次没能抽取，当前可选餐品不足或随机源不可用。请调整数量或刷新后再试。'; }
+      try { const items = bundleOnly ? drawBundle(data,noMain,randomInt,quantity) : draw(data, noMain, randomInt, quantity); count++; show(items,bundleOnly?'bundle':'random'); }
+      catch (_) { mode(previousMode); quantity = previousQuantity; $('quantity-select').value = String(quantity); $('action-status').textContent = bundleOnly ? '当前没有符合数量和主食偏好的套餐。可选2–3样重试，或使用普通随机；原餐单已保留。' : '这次没能抽取，当前可选餐品不足或随机源不可用。请调整数量或刷新后再试。'; }
       finally { setBusy(false); loadShared(); }
     }, root.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 360);
   }
@@ -225,6 +253,7 @@
     }
   }
   $('draw-button').addEventListener('click', () => { clearSharedHash(); redraw(); });
+  $('bundle-button').addEventListener('click', () => { clearSharedHash(); redraw(noMain,quantity,true); });
   $('reprice-button').addEventListener('click', () => {
     if (busy || !selected.length) return;
     show(selected.slice(), currentExample ? 'example' : 'restored', false);
